@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/ronniery/retro-cover/issues"
   },
-  "homepage": "https://github.com/ronniery/retro-cover#readme"
+  "homepage": "https://github.com/ronniery/retro-cover#readme",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  }
 }
