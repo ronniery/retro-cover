@@ -4,7 +4,8 @@
   "description": "A node.js library to search, parse and fetch covers from https://www.thecoverproject.net/",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "tsc --watch"
   },
   "repository": {
     "type": "git",
