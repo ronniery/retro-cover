@@ -1,0 +1,25 @@
+{
+  "name": "retro-cover",
+  "version": "1.0.0",
+  "description": "A node.js library to search, parse and fetch covers from https://www.thecoverproject.net/",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronniery/retro-cover.git"
+  },
+  "keywords": [
+    "retro",
+    "game",
+    "cover",
+    "thecoverproject"
+  ],
+  "author": "Ronniery Borges Correa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ronniery/retro-cover/issues"
+  },
+  "homepage": "https://github.com/ronniery/retro-cover#readme"
+}
