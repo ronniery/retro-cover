@@ -1,1 +1,0 @@
-{"version":3,"file":"platform-additions.js","sourceRoot":"","sources":["../../lib/selectors/platform-additions.ts"],"names":[],"mappings":";;AAAA,kBAAe;IACb,aAAa,EAAE,aAAa;IAC5B,KAAK,EAAE;QACL,KAAK,EAAE,cAAc;QACrB,IAAI,EAAE,gBAAgB;QACtB,WAAW,EAAE,kBAAkB;QAC/B,MAAM,EAAE,cAAc;QACtB,KAAK,EAAE,mBAAmB;QAC1B,MAAM,EAAE,gBAAgB;KACzB;CACF,CAAC"}
