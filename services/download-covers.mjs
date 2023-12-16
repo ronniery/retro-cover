@@ -2,10 +2,9 @@ import fs from 'fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { default as _ } from 'lodash';
+import fetch from 'node-fetch';
 import { v4 as uuidv4 } from 'uuid';
 import https from 'node:https';
-import http from 'node:http';
-import axios from 'axios';
 
 const { chunk, isEmpty } = _;
 const __filename = fileURLToPath(import.meta.url);
@@ -22,9 +21,7 @@ const downloadCovers = async (targets, { outputPath, parallelDownload = 3 } = {}
     fs.mkdirSync(fullPath, { recursive: true })
   }
 
-  const chunks = chunk(targets, Math.min(5, parallelDownload))
-
-  for (let block of chunks) {
+  for (let block of chunk(targets, Math.min([5, parallelDownload]))) {
     const filesToDownload = block.map(item => {
       let url = item?.downloadUrl;
 
@@ -32,12 +29,9 @@ const downloadCovers = async (targets, { outputPath, parallelDownload = 3 } = {}
         url = item
       }
 
-      return axios.get(url, {
-        responseType: 'stream',
-        httpAgent: new http.Agent({
-          rejectUnauthorized: false,
-        }),
-        httpsAgent: new https.Agent({
+      return fetch(url, {
+        method: "GET",
+        agent: new https.Agent({
           rejectUnauthorized: false,
         })
       })
@@ -46,7 +40,7 @@ const downloadCovers = async (targets, { outputPath, parallelDownload = 3 } = {}
           const [, filename] = attachment.match(/filename=(.*).jpg/);
           const writeStream = fs.createWriteStream(`${fullPath}/${filename || uuidv4()}.jpg`)
 
-          res.data.pipe(writeStream);
+          res.body.pipe(writeStream);
         })
     });
 
@@ -65,5 +59,4 @@ await downloadCovers([
   'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=12512',
   'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=12513',
   'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=16027'
-], { outputPath: './games/covers' })
-  .catch(err => console.log(err));
+], { outputPath: './games/covers' });

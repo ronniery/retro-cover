@@ -70,10 +70,12 @@ const parseSearches = ($) => {
 
   $('.pageBody tr').each((_, element) => {
     const $a = $(element).find('a');
+    const href = $a.attr('href');
     const [, name, platform] = $a.text().match(/(.+?)\s\((.+?)\)/i);
-    const source = nodeURL.resolve(baseUrl, $a.attr('href'));
+    const source = nodeURL.resolve(baseUrl, href);
+    const [, gameId] = href.match(/game_id=(.*)/)
 
-    results.push({ name, platform, source });
+    results.push({ name, platform, source, gameId: +gameId });
   });
 
   // Extract pagination information
