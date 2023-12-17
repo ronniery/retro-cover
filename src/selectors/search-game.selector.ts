@@ -1,4 +1,4 @@
-export const searchGameSelector = ($: cheerio.Root) => {
+export const searchGameSelectors = ($: cheerio.Root) => {
   const newsHeader = $('td.newsHeader');
   const pageBody = $('.pageBody');
   const paginator = $('div.paginator');

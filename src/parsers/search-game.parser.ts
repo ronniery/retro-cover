@@ -1,14 +1,15 @@
-import * as cheerio from "cheerio";
 import URL from 'node:url';
 
+import { searchGameSelectors } from "@/selectors";
+import { BASE_URL } from "@/constants";
+
 import { Platforms, SearchOnlineResult } from "./parser.types";
-import { searchGameSelector } from "../selectors";
-import { BASE_URL } from "../constants";
 import { AbstractParser } from "./parser";
 
 export class SearchGameParser extends AbstractParser<SearchOnlineResult> {
+
   parse(): SearchOnlineResult {
-    const { pageBody, spanThisPage, paginatorChildren, newsHeader } = searchGameSelector(this.$);
+    const { pageBody, spanThisPage, paginatorChildren, newsHeader } = searchGameSelectors(this.$);
     const [, searchTerm] = newsHeader.first().text().match(/Search Results for: (.+)/) || [];
     const results = pageBody.find('tr').toArray().map((element) => {
       const $a = this.$(element).find('a');

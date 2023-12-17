@@ -1,6 +1,4 @@
-import * as cheerio from "cheerio";
-
-import { Computers, Consoles, Handhelds } from "../constants/platforms";
+import { Computers, Consoles, Handhelds } from "@/constants";
 
 export type Platforms = Consoles | Handhelds | Computers
 

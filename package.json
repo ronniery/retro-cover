@@ -5,8 +5,7 @@
   "scripts": {
     "test": "test",
     "build": "tsc -p tsconfig.json",
-    "build:dev": "tsc -p tsconfig.dev.json",
-    "dev": "ts-node -T src/index.ts"
+    "prepare": "ts-patch install -s"
   },
   "repository": {
     "type": "git",
@@ -26,18 +25,11 @@
   "homepage": "https://github.com/ronniery/retro-cover#readme",
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
-    "@types/lodash.omit": "^4.5.9",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard-with-typescript": "^43.0.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.4.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-promise": "^6.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "5.4.0-dev.20231216",
+    "ts-patch": "^3.1.1",
+    "typescript": "5.4.0-dev.20231217",
+    "typescript-transform-paths": "^3.4.6",
     "uglify-js": "^3.17.4"
   },
   "dependencies": {
@@ -46,8 +38,6 @@
     "axios-request-throttle": "^1.0.0",
     "axios-retry": "^4.0.0",
     "cheerio": "^1.0.0-rc.12",
-    "fastest-levenshtein": "^1.0.16",
-    "lodash.omit": "^4.5.0",
     "robots-parser": "^3.0.1",
     "uuid": "^9.0.1"
   }

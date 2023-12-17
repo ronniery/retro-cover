@@ -1,30 +1,23 @@
-import omit from "lodash.omit";
-import { distance } from 'fastest-levenshtein';
-import { SEARCH_GAMES } from "../constants/server-paths";
-import { SearchOfflineResult, SearchOnlineResult } from "../parsers";
-import { SearchGameParser } from "../parsers/search-game.parser";
+import { SEARCH_GAMES } from "@/constants";
+import { SearchGameParser, SearchOfflineResult, SearchOnlineResult } from "@/parsers";
+import coverProjectGames from '@/project-games.json';
+
 import httpApi from "./client/http-api";
-import coverProjectGames from '../cover-project-games.json';
 
-import { SearchOfflineOptions, SearchOnlineOptions } from "./search-game.types";
-
-export const searchOffline = async (gameTitle: string, options: SearchOfflineOptions = { minLevenshteinDistance: 17 }): Promise<SearchOfflineResult> => {
+export const searchOffline = async (gameTitle: string): Promise<SearchOfflineResult> => {
   const { games } = coverProjectGames;
 
   const matches = Object
     .entries(games)
-    .reduce((reducer, [gameId, gameName]) => {
-      if (distance(gameTitle, gameName) >= options?.minLevenshteinDistance) {
-        reducer.push({ gameId, gameName });
-      }
-
-      return reducer;
-    }, [] as SearchOfflineResult);
+    .filter(([_, gameName]) => new RegExp(gameTitle, 'i').test(gameName))
+    .map(([gameId, gameName]) => ({ gameId, gameName }));
 
   return matches;
 }
 
-export const searchOnline = async (gameTitle: string, options?: SearchOnlineOptions): Promise<SearchOnlineResult> => {
+export const searchOnline = async (gameTitle: string, options?: {
+  page?: number;
+}): Promise<SearchOnlineResult> => {
   const query = new URLSearchParams({
     searchstring: gameTitle
   });
