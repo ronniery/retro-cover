@@ -1,7 +1,7 @@
 import axios from "axios";
 import robotsParser, { Robot } from "robots-parser";
 
-import { ROBOTS, BASE_URL } from "@/constants";
+import { ROBOTS, BASE_URL } from "../constants";
 
 class RobotsCache {
   public online: string | undefined;

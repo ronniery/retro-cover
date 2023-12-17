@@ -1,4 +1,4 @@
 export * from './robots';
-export * from './search-game';
+export * from './search';
 
 export * from './client/http-api';

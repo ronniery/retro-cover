@@ -1,8 +1,9 @@
 import * as cheerio from "cheerio";
 
-import { IParser } from "./parser.types";
+import { IParser, Pagination } from "./parser.types";
+import { paginationSelector } from "../selectors/pagination.selector";
 
-export abstract class AbstractParser<TOutput> implements IParser<TOutput> {
+export abstract class AbstractParser<TOutput, TParseOptions = undefined> implements IParser<TOutput, TParseOptions> {
   protected $: cheerio.Root;
 
   constructor(htmlString: string) {
@@ -17,5 +18,24 @@ export abstract class AbstractParser<TOutput> implements IParser<TOutput> {
     })
   }
 
-  public abstract parse(): TOutput
+  public abstract parse(options?: TParseOptions): TOutput
+
+  protected getPagination(collectionSize: number): Pagination {
+    const { spanThisPage, paginatorChildren } = paginationSelector(this.$);
+
+    // Extract pagination information
+    const current = parseInt(spanThisPage.text());
+    const pageSize = collectionSize;
+    const totalPages = parseInt(paginatorChildren.last().text());
+    const next = current === totalPages ? null : current + 1;
+    const prev = current === 1 ? null : current - 1;
+
+    return {
+      current,
+      pageSize,
+      totalPages,
+      next,
+      prev
+    }
+  }
 }

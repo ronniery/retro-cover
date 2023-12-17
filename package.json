@@ -5,6 +5,7 @@
   "scripts": {
     "test": "test",
     "build": "tsc -p tsconfig.json",
+    "build:dev": "npm run build -- --incremental --sourceMap --pretty",
     "prepare": "ts-patch install -s"
   },
   "repository": {
@@ -25,11 +26,13 @@
   "homepage": "https://github.com/ronniery/retro-cover#readme",
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
+    "@types/lodash.isdate": "^4.0.9",
+    "@types/lodash.isempty": "^4.4.9",
+    "@types/lodash.orderby": "^4.6.9",
     "eslint": "^8.56.0",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.1.1",
     "typescript": "5.4.0-dev.20231217",
-    "typescript-transform-paths": "^3.4.6",
     "uglify-js": "^3.17.4"
   },
   "dependencies": {
@@ -38,6 +41,10 @@
     "axios-request-throttle": "^1.0.0",
     "axios-retry": "^4.0.0",
     "cheerio": "^1.0.0-rc.12",
+    "html-entities": "^2.4.0",
+    "lodash.isdate": "^4.0.1",
+    "lodash.isempty": "^4.4.0",
+    "lodash.orderby": "^4.6.0",
     "robots-parser": "^3.0.1",
     "uuid": "^9.0.1"
   }
