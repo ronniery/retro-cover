@@ -1,4 +1,8 @@
-{
+export type ProjectCountries = typeof projectCountries;
+export type ProjectCountiesAlpha2 = keyof ProjectCountries;
+export type ProjectCountriesNames = typeof projectCountries[ProjectCountiesAlpha2];
+
+export const projectCountries = {
   "ad": "Andorra",
   "ae": "United Arab Emirates",
   "af": "Afghanistan",
@@ -248,4 +252,4 @@
   "zm": "Zambia",
   "zw": "Zimbabwe",
   "noregion": "No-region"
-}
+} as const

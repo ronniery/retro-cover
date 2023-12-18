@@ -1,4 +1,5 @@
 import { Computers, Consoles, Handhelds } from "../constants";
+import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
 
 export type Platforms = Consoles | Handhelds | Computers
 
@@ -49,6 +50,45 @@ export type PlatformAdditionsOptions = {
   order: { [key in keyof AddedGame]: 'asc' | 'desc' };
   ignoreEmpty: boolean;
   startingAt: Date;
+}
+
+export type KnownFormats = 'PAL' | 'NTSC' | 'NTSC-J'
+
+export type GameCover = {
+  description: string;
+  format: KnownFormats;
+  createdBy: string;
+  region: ProjectCountriesNames;
+  caseType: string;
+  downloadedTimes: number;
+  downloadUrl: string;
+}
+
+export type GameCoverMetadataOptions = {
+  gameId: string | number;
+  includeManuals: boolean,
+  firstAvailable: boolean,
+  onlyFormats: Array<KnownFormats>,
+  onlyRegions: Array<ProjectCountiesAlpha2>
+}
+
+export type GetGameCoverOptions = Omit<GameCoverMetadataOptions, 'gameId'>;
+
+export type GameCoverCollection = { [gameId: string]: Omit<GameCoverMetadata, 'drafts'> | string }
+
+export type DraftGameCover = {
+  coverId: string;
+  format: KnownFormats;
+  country: string;
+}
+
+export type GameCoverMetadata = {
+  drafts: Array<DraftGameCover>;
+  covers: Array<GameCover>;
+  manuals: string[];
+  gameTitle: string;
+  source: string;
+  platform: string | undefined;
 }
 
 export type PlatformCover = { gameTitle: string, covers: number, manuals: number, source: string }

@@ -6,8 +6,8 @@ import { decode } from "html-entities";
 import { AbstractParser } from "./parser";
 import { GameAdditions, PlatformAdditionsOptions, AddedGame, CountryDictionary } from "./parser.types";
 
-import projectCountries from '../project-countries.json';
 import { platformAdditionsSelectors } from "../selectors";
+import { projectCountries } from "../utils/project-countries";
 
 export class PlatformAdditionsParser extends AbstractParser<GameAdditions, PlatformAdditionsOptions> {
   private readonly headerRegex = /(?<platform>.+?) Game Covers \((?<availableCovers>\d+) Covers\) > Newest Covers/;

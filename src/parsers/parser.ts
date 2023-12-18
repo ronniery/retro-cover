@@ -6,8 +6,8 @@ import { paginationSelector } from "../selectors/pagination.selector";
 export abstract class AbstractParser<TOutput, TParseOptions = undefined> implements IParser<TOutput, TParseOptions> {
   protected $: cheerio.Root;
 
-  constructor(htmlString: string) {
-    this.$ = cheerio.load(htmlString, {
+  constructor(htmlString: string, useOptions = true) {
+    const options = {
       decodeEntities: false,
       lowerCaseTags: true,
       lowerCaseAttributeNames: true,
@@ -15,7 +15,9 @@ export abstract class AbstractParser<TOutput, TParseOptions = undefined> impleme
       recognizeSelfClosing: true,
       normalizeWhitespace: true,
       _useHtmlParser2: true
-    })
+    };
+
+    this.$ = cheerio.load(htmlString, useOptions ? options : {})
   }
 
   public abstract parse(options?: TParseOptions): TOutput
