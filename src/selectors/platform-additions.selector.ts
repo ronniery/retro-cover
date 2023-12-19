@@ -6,9 +6,7 @@ type PlatformAdditionsSelectors = {
   newsHeader: cheerio.Cheerio;
 };
 
-export const platformAdditionsSelectors = (
-  $: cheerio.Root,
-): PlatformAdditionsSelectors => {
+export const platformAdditionsSelectors = ($: cheerio.Root): PlatformAdditionsSelectors => {
   const newsTable = $('table.newsTable').first();
   const newsHeader = newsTable.find('td.newsHeader');
   const gameRows = newsTable.find('table.tblSpecs tr');

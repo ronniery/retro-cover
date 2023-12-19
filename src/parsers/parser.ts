@@ -3,9 +3,7 @@ import * as cheerio from 'cheerio';
 import { IParser, Pagination } from './parser.types';
 import { paginationSelector } from '../selectors/pagination.selector';
 
-export abstract class AbstractParser<TOutput, TParseOptions = undefined>
-  implements IParser<TOutput, TParseOptions>
-{
+export abstract class AbstractParser<TOutput, TParseOptions = undefined> implements IParser<TOutput, TParseOptions> {
   protected $: cheerio.Root;
 
   constructor(htmlString: string, useOptions = true) {
@@ -26,17 +24,19 @@ export abstract class AbstractParser<TOutput, TParseOptions = undefined>
 
   protected getPagination(collectionSize: number): Pagination {
     const { spanThisPage, paginatorChildren } = paginationSelector(this.$);
+    const pageLinks = paginatorChildren.toArray().filter((el) => !isNaN(+this.$(el).text()));
+    const pageLastLink = pageLinks[pageLinks.length - 1];
 
     // Extract pagination information
     const current = parseInt(spanThisPage.text());
-    const pageSize = collectionSize;
-    const totalPages = parseInt(paginatorChildren.last().text());
+    const itemsPerPage = collectionSize;
+    const totalPages = parseInt(this.$(pageLastLink).text());
     const next = current === totalPages ? null : current + 1;
     const prev = current === 1 ? null : current - 1;
 
     return {
       current,
-      pageSize,
+      itemsPerPage,
       totalPages,
       next,
       prev,

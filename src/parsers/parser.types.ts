@@ -34,7 +34,7 @@ export type Matcher =
 
 export type Pagination = {
   current: number | null;
-  pageSize: number | null;
+  itemsPerPage: number | null;
   totalPages: number | null;
   next: number | null;
   prev: number | null;

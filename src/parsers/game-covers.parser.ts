@@ -3,25 +3,14 @@ import { decode } from 'html-entities';
 
 import { BASE_URL, GAME_COVERS } from '../constants';
 import { AbstractParser } from './parser';
-import {
-  DraftGameCover,
-  GameCover,
-  GameCoverMetadata,
-  GameCoverMetadataOptions,
-  KnownFormats,
-} from './parser.types';
+import { DraftGameCover, GameCover, GameCoverMetadata, GameCoverMetadataOptions, KnownFormats } from './parser.types';
 import { gameCoverSelector } from '../selectors/game-covers.selector';
 import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
 
-export class GameCoverMetadataParser extends AbstractParser<
-  GameCoverMetadata,
-  GameCoverMetadataOptions
-> {
+export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, GameCoverMetadataOptions> {
   public parse(options?: GameCoverMetadataOptions): GameCoverMetadata {
-    const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } =
-      options ?? {};
-    const { firstCover, allCovers, newsTableGamePlatform, newsTableGameTitle } =
-      gameCoverSelector(this.$);
+    const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } = options ?? {};
+    const { firstCover, allCovers, newsTableGamePlatform, newsTableGameTitle } = gameCoverSelector(this.$);
     const elements = firstAvailable ? this.$(firstCover) : this.$(allCovers);
 
     let drafts: Array<DraftGameCover> = [];
@@ -33,15 +22,10 @@ export class GameCoverMetadataParser extends AbstractParser<
       if (url.includes('/manuals/')) {
         manuals = [...manuals, URL.resolve(BASE_URL, this.$(a).attr('href') ?? '')];
       } else {
-        const [, format] =
-          this.$(el)
-            .find('span')
-            ?.html()
-            ?.match(/^format:\s([a-z]+)/i) ?? [];
-        const [, country] =
-          this.$(img)
-            .attr('src')
-            ?.match(/flags\/([a-z]+)/) ?? [];
+        const spanHtml = this.$(el).find('span')?.html();
+        const [, format] = spanHtml?.match(/^format:\s([a-z]+)/i) ?? [];
+        const imgSource = this.$(img).attr('src');
+        const [, country] = imgSource?.match(/flags\/([a-z]+)/) ?? [];
         const coverId = url.replace(/v.*=/, '');
 
         drafts = [
@@ -63,7 +47,7 @@ export class GameCoverMetadataParser extends AbstractParser<
       drafts = drafts.filter(({ format }) => onlyFormats.includes(format));
     }
 
-    const gameCoverMetadata = {
+    const coverMetadata = {
       covers: [],
       drafts,
       manuals: [] as string[],
@@ -73,10 +57,10 @@ export class GameCoverMetadataParser extends AbstractParser<
     };
 
     if (includeManuals) {
-      gameCoverMetadata.manuals = manuals;
+      coverMetadata.manuals = manuals;
     }
 
-    return gameCoverMetadata;
+    return coverMetadata;
   }
 }
 

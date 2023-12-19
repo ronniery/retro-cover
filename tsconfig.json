@@ -15,6 +15,6 @@
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src"],
+  "include": ["src", "testSetup.ts", "node_modules/jest-extended/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

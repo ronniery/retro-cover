@@ -1,10 +1,5 @@
 import { SEARCH_GAMES } from '../constants';
-import {
-  SearchGameParser,
-  SearchOfflineResult,
-  SearchResult,
-  ServiceResult,
-} from '../parsers';
+import { SearchGameParser, SearchOfflineResult, SearchResult, ServiceResult } from '../parsers';
 import coverProjectGames from '../project-games.json';
 
 import httpApi from './client/http-api';
@@ -33,12 +28,9 @@ export const searchOnline = async (
     query.append('page', options.page.toString());
   }
 
-  const { data } = await httpApi.get<ServiceResult<SearchResult[]>>(
-    `${SEARCH_GAMES}?${query.toString()}`,
-    {
-      transformResponse: (html: string) => new SearchGameParser(html).parse(),
-    },
-  );
+  const { data } = await httpApi.get<ServiceResult<SearchResult[]>>(`${SEARCH_GAMES}?${query.toString()}`, {
+    transformResponse: (html: string) => new SearchGameParser(html).parse(),
+  });
 
   return data;
 };

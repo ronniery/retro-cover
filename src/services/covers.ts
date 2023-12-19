@@ -8,33 +8,21 @@ import path from 'node:path';
 import httpApi from './client/http-api';
 import { BASE_URL, DOWNLOAD_COVER, GAME_COVERS, GAME_PROFILE } from '../constants';
 import { GameCoverMetadataParser, GameCoverParser } from '../parsers/game-covers.parser';
-import {
-  GameCover,
-  GameCoverCollection,
-  GameCoverMetadata,
-  GetGameCoverOptions,
-} from '../parsers';
+import { GameCover, GameCoverCollection, GameCoverMetadata, GetGameCoverOptions } from '../parsers';
 
 const HOME_TITLE = 'The Cover Project > Home' as const;
 
-const getGameCoverMetadataBy = async (
-  gameId: string,
-  options?: GetGameCoverOptions,
-): Promise<GameCoverMetadata> => {
+const getGameCoverMetadataBy = async (gameId: string, options?: GetGameCoverOptions): Promise<GameCoverMetadata> => {
   const { data: profile } = await httpApi.get<string>(GAME_PROFILE, {
     query: { game_id: gameId },
   });
 
   if (profile.includes(HOME_TITLE)) throw new Error('Invalid gameId given');
 
-  return new GameCoverMetadataParser(profile).parse(
-    Object.assign({}, options, { gameId }),
-  );
+  return new GameCoverMetadataParser(profile).parse(Object.assign({}, options, { gameId }));
 };
 
-const getAllGameCovers = async (
-  drafts: GameCoverMetadata['drafts'],
-): Promise<GameCover[]> => {
+const getAllGameCovers = async (drafts: GameCoverMetadata['drafts']): Promise<GameCover[]> => {
   const coverPromises = drafts.map(async ({ coverId }) => {
     const { data } = await httpApi.get<GameCover>(GAME_COVERS, {
       query: { cover_id: coverId },
@@ -78,9 +66,7 @@ const createFullOutputPath = (outputPath: string): string => {
   return fullPath;
 };
 
-const downloadFile = async (
-  downloadUrl: string,
-): Promise<AxiosResponse<fs.WriteStream, unknown>> => {
+const downloadFile = async (downloadUrl: string): Promise<AxiosResponse<fs.WriteStream, unknown>> => {
   return axios.get(downloadUrl, {
     responseType: 'stream',
     onDownloadProgress(progressEvent) {

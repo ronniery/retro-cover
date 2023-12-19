@@ -25,9 +25,7 @@ httpApi.interceptors.request.use(
       robots = await getRobots();
 
       if (robots.isAllowed(config.url as string) === false) {
-        throw new Error(
-          `The requested endpoint: \n [${config.url}] is blocked by robots.txt`,
-        );
+        throw new Error(`The requested endpoint: \n [${config.url}] is blocked by robots.txt`);
       }
     }
 

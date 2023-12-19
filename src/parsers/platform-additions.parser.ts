@@ -4,22 +4,13 @@ import isDate from 'lodash.isdate';
 import { decode } from 'html-entities';
 
 import { AbstractParser } from './parser';
-import {
-  GameAdditions,
-  PlatformAdditionsOptions,
-  AddedGame,
-  CountryDictionary,
-} from './parser.types';
+import { GameAdditions, PlatformAdditionsOptions, AddedGame, CountryDictionary } from './parser.types';
 
 import { platformAdditionsSelectors } from '../selectors';
 import { projectCountries } from '../utils/project-countries';
 
-export class PlatformAdditionsParser extends AbstractParser<
-  GameAdditions,
-  PlatformAdditionsOptions
-> {
-  private readonly headerRegex =
-    /(?<platform>.+?) Game Covers \((?<availableCovers>\d+) Covers\) > Newest Covers/;
+export class PlatformAdditionsParser extends AbstractParser<GameAdditions, PlatformAdditionsOptions> {
+  private readonly headerRegex = /(?<platform>.+?) Game Covers \((?<availableCovers>\d+) Covers\) > Newest Covers/;
 
   public parse(options?: PlatformAdditionsOptions): GameAdditions {
     const { newsHeader } = platformAdditionsSelectors(this.$);
@@ -28,9 +19,7 @@ export class PlatformAdditionsParser extends AbstractParser<
 
     const platformInfo = {
       platform: headerMatch?.groups?.platform || null,
-      availableCovers: headerMatch?.groups?.availableCovers
-        ? parseInt(headerMatch.groups.availableCovers, 10)
-        : null,
+      availableCovers: headerMatch?.groups?.availableCovers ? parseInt(headerMatch.groups.availableCovers, 10) : null,
     };
 
     let addedGames = this.getAllAdditions(options?.ignoreEmpty);
@@ -49,9 +38,7 @@ export class PlatformAdditionsParser extends AbstractParser<
   }
 
   private getAllAdditions(ignoreEmpty: boolean = false): Array<AddedGame> {
-    const { gameRows, articleText, smallArticleText } = platformAdditionsSelectors(
-      this.$,
-    );
+    const { gameRows, articleText, smallArticleText } = platformAdditionsSelectors(this.$);
 
     return gameRows.toArray().reduce((accumulator, element): Array<AddedGame> => {
       const tds = this.$(element).find('td');

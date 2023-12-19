@@ -6,10 +6,12 @@ type GameCoverSelectors = {
 };
 
 export const gameCoverSelector = ($: cheerio.Root): GameCoverSelectors => {
+  const newsTable = 'table table table.newsTable' as const;
+
   const firstCover = '#covers ul li.tabSelected';
   const allCovers = '#covers ul li:not(.tabHeader)';
-  const newsTableGameTitle = $('.newsTable:last-child td.pageBody h2');
-  const newsTableGamePlatform = $('.newsTable:last-child .newsHeader a');
+  const newsTableGameTitle = $(`${newsTable} td.pageBody h2`);
+  const newsTableGamePlatform = $(`${newsTable} .newsHeader a`);
 
   return { firstCover, allCovers, newsTableGameTitle, newsTableGamePlatform };
 };
