@@ -1,4 +1,3 @@
-export * from './parser.types';
 export * from './search-game';
 export * from './platform-additions';
 export * from './platform-covers';

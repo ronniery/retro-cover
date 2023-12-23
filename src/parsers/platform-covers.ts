@@ -3,7 +3,7 @@ import URL from 'node:url';
 import { AbstractParser } from './parser';
 
 import { BASE_URL } from '../constants';
-import { ServiceResult } from './parser.types';
+import { ServiceResult } from '../types';
 import { platformCoversSelectors } from '../selectors';
 
 export type PlatformCover = {

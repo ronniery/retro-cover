@@ -1,7 +1,7 @@
 import * as selector from '../selectors/pagination';
 import { AbstractParser } from './parser';
 import { getPaginationHtml } from './parser.mock';
-import { Pagination } from './parser.types';
+import { Pagination } from '../types';
 
 class ConcreteParser extends AbstractParser<string> {
   public parse(): string {
@@ -17,7 +17,7 @@ class ConcreteParser extends AbstractParser<string> {
   }
 }
 
-describe('AbstractParser', () => {
+describe('parsers/parser | AbstractParser', () => {
   let parser: ConcreteParser;
 
   beforeEach(() => {
@@ -35,7 +35,7 @@ describe('AbstractParser', () => {
   });
 
   it('should call paginationSelector while getting pagination', () => {
-    throw new Error('TODO')
+    throw new Error('TODO');
     const mockPagination = jest.fn();
     jest.spyOn(selector, 'paginationSelector').mockImplementation(mockPagination);
 

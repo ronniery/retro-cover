@@ -2,7 +2,7 @@ import cheerio from 'cheerio'
 
 import { GameCoverSelectors, gameCoverSelector } from './game-covers'
 
-describe('game-cover.selector', () => {
+describe('selectors/game-covers.ts | gameCoverSelector', () => {
   it('should correctly return game cover selectors', () => {
     const $ = cheerio.load(`<html><body></body></html>`);
     const selectors = gameCoverSelector($);

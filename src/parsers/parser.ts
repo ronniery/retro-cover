@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 
-import { IParser, Pagination } from './parser.types';
+import { IParser, Pagination } from '../types';
 import { paginationSelector } from '../selectors/pagination';
 
 export abstract class AbstractParser<TOutput, TParseOptions = undefined> implements IParser<TOutput, TParseOptions> {

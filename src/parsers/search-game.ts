@@ -1,6 +1,6 @@
 import URL from 'node:url';
 
-import { SearchResult, ServiceResult } from './parser.types';
+import { SearchResult, ServiceResult } from '../types';
 import { AbstractParser } from './parser';
 
 import { searchGameSelectors } from '../selectors';

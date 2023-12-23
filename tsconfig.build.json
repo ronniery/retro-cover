@@ -5,7 +5,8 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
-    "rootDir": "./",
+    "outDir": "dist",
+    "rootDir": "./src/",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
@@ -13,12 +14,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts",
-    "testSetup.ts",
-    "node_modules/jest-extended/types/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.ts", "testSetup.ts", "node_modules/jest-extended/types/**/*.d.ts"],
+  "exclude": ["src/**/*.test.ts", "node_modules", "testSetup.ts", "src/types.ts"]
 }

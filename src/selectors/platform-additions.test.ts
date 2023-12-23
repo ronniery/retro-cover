@@ -2,7 +2,7 @@ import cheerio from 'cheerio';
 
 import { PlatformAdditionsSelectors, platformAdditionsSelectors } from './platform-additions';
 
-describe('platform-additions.selector', () => {
+describe('selectors/platform-additions.ts | platformAdditionsSelectors', () => {
   it('should correctly return platform additions selectors', () => {
     const $ = cheerio.load(`<html><body></body></html>`);
     const selectors = platformAdditionsSelectors($);

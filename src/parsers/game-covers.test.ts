@@ -1,9 +1,9 @@
 import { gameCovers, gameMetadata } from './game-covers.mock';
 import { GameCoverMetadataParser, GameCoverParser } from './game-covers';
-import { DraftGameCover } from './parser.types';
+import { DraftGameCover } from '../types';
 
-describe('GameCoverMetadata', () => {
-  const {internationalSuperstarSoccer64, spiderMan2} = gameMetadata;
+describe('parsers/game-covers.ts | GameCoverMetadataParser', () => {
+  const { internationalSuperstarSoccer64, spiderMan2 } = gameMetadata;
 
   it('should parse Spider Man 2 and check the generated metadata', () => {
     const { html, gameId } = spiderMan2;
@@ -23,25 +23,25 @@ describe('GameCoverMetadata', () => {
       gameId: gameId,
     });
 
-     const { drafts } = metadata;
-     expect(drafts).toBeDefined();
-     expect(drafts).toBeArray();
-     expect(drafts).toEqual(
-       expect.arrayContaining([
-         expect.objectContaining<DraftGameCover>({
-           country: expect.toBeOneOf(['us', 'fr']),
-           coverId: expect.any(String),
-           format: expect.toBeOneOf(['NTSC', 'PAL']),
-         }),
-       ]),
-     );
+    const { drafts } = metadata;
+    expect(drafts).toBeDefined();
+    expect(drafts).toBeArray();
+    expect(drafts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining<DraftGameCover>({
+          country: expect.toBeOneOf(['us', 'fr']),
+          coverId: expect.any(String),
+          format: expect.toBeOneOf(['NTSC', 'PAL']),
+        }),
+      ]),
+    );
   });
 
   it('should parse Spider Man 2 bringing only the first available', () => {
     const { html, coverId, gameId } = spiderMan2;
     const metadata = new GameCoverMetadataParser(html).parse({
       gameId: gameId,
-      firstAvailable: true
+      firstAvailable: true,
     });
 
     const { drafts } = metadata;
@@ -66,10 +66,10 @@ describe('GameCoverMetadata', () => {
     expect(drafts.length).toBe(2);
 
     drafts.forEach((draft) => {
-       expect(draft).toHaveProperty('country', 'fr');
-       expect(draft).toHaveProperty('coverId');
+      expect(draft).toHaveProperty('country', 'fr');
+      expect(draft).toHaveProperty('coverId');
       expect(draft.coverId).toBeOneOf(['25045', '25046']);
-       expect(draft).toHaveProperty('format', 'PAL');
+      expect(draft).toHaveProperty('format', 'PAL');
     });
   });
 
@@ -77,7 +77,7 @@ describe('GameCoverMetadata', () => {
     const { html, gameId } = spiderMan2;
     const metadata = new GameCoverMetadataParser(html).parse({
       gameId: gameId,
-      onlyRegions: ['us']
+      onlyRegions: ['us'],
     });
 
     const { drafts } = metadata;
@@ -96,7 +96,7 @@ describe('GameCoverMetadata', () => {
     const { html, gameId } = internationalSuperstarSoccer64;
     const metadata = new GameCoverMetadataParser(html).parse({
       gameId: gameId,
-      includeManuals: true
+      includeManuals: true,
     });
 
     const { manuals } = metadata;

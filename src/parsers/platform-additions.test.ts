@@ -1,9 +1,9 @@
 import orderBy from 'lodash.orderby';
-import { AddedGame } from './parser.types';
+import { AddedGame } from '../types';
 import { PlatformAdditionsParser } from './platform-additions';
 import { newAdditions } from './platform-additions.mock';
 
-describe('PlatformAdditionsParser', () => {
+describe('parser/platform-additions.ts PlatformAdditionsParser', () => {
   const { playstation2, playstation3, atariLynx, sega32x } = newAdditions;
 
   it('should parse Playstation 2 additions', () => {

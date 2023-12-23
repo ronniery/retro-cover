@@ -1,13 +1,11 @@
 import {
-  GameAdditions,
   PlatformAdditionsParser,
-  PlatformAdditionsOptions,
-  PlatformCoverParser,
-  Matcher,
+  PlatformCoverParser
 } from '../parsers';
 import { PLATFORM_ADDITIONS, PLATFORM_COVERS, Platforms } from '../constants';
 
 import httpApi from './client/http-api';
+import { PlatformAdditionsOptions, GameAdditions, Matcher } from '../types';
 
 export type GetPlatformCoverOptions = {
   page?: number;

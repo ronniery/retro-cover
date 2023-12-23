@@ -1,5 +1,6 @@
+import { ServiceResult, SearchResult } from '../types';
 import { SEARCH_GAMES } from '../constants';
-import { SearchGameParser, SearchResult, ServiceResult } from '../parsers';
+import { SearchGameParser } from '../parsers';
 import coverProjectGames from '../project-games.json';
 
 import httpApi from './client/http-api';

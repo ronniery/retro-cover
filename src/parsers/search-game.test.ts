@@ -1,9 +1,9 @@
 import { Computers, Consoles, Handhelds } from "../constants";
-import { Pagination, SearchResult } from "./parser.types";
+import { Pagination, SearchResult } from '../types';
 import { SearchGameParser } from "./search-game";
 import { searches } from "./search-game.mock";
 
-describe('SearchGameParser', () => {
+describe('parser/search-game.ts | SearchGameParser', () => {
   const { superMario } = searches;
   const allConsoles = [...Object.keys(Consoles), ...Object.keys(Handhelds), ...Object.keys(Computers)]
     .filter((console) => !Number.isInteger(+console))

@@ -3,7 +3,14 @@ import { decode } from 'html-entities';
 
 import { BASE_URL, GAME_COVERS } from '../constants';
 import { AbstractParser } from './parser';
-import { DraftGameCover, GameCover, GameCoverMetadata, GameCoverMetadataOptions, GameManual, KnownFormats } from './parser.types';
+import {
+  DraftGameCover,
+  GameCover,
+  GameCoverMetadata,
+  GameCoverMetadataOptions,
+  GameManual,
+  KnownFormats,
+} from '../types';
 import { gameCoverSelector } from '../selectors/game-covers';
 import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
 

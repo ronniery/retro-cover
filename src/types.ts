@@ -1,4 +1,6 @@
-import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
+import { ProjectCountiesAlpha2, ProjectCountriesNames } from "./utils/project-countries";
+
+export type GetGameCoverOptions = Omit<GameCoverMetadataOptions, 'gameId'>;
 
 export type Matcher =
   | '#'
@@ -100,7 +102,7 @@ export type DraftGameCover = {
 export type GameManual = {
   source: string;
   language: string;
-}
+};
 
 export type GameCoverMetadata = {
   drafts: Array<DraftGameCover>;
