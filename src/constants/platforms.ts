@@ -1,3 +1,5 @@
+export type Platforms = Consoles | Handhelds | Computers;
+
 export enum Consoles {
   '3DO' = 40,
   amigaCD32 = 48,
@@ -39,6 +41,22 @@ export enum Consoles {
   xboxSeriesX = 64,
 }
 
+export const consoleAcronyms = {
+  coleco: Consoles[38],
+  snes: Consoles[8],
+  dc: Consoles[1],
+  gc: Consoles[2],
+  'fam disk': Consoles[41],
+  sms: Consoles[30],
+  n64: Consoles[4],
+  ps1: Consoles[5],
+  ps2: Consoles[6],
+  ps3: Consoles[19],
+  ps4: Consoles[60],
+  ps5: Consoles[63],
+  intv: Consoles[31],
+};
+
 export enum Handhelds {
   '3DS' = 54,
   atariLynx = 44,
@@ -57,6 +75,16 @@ export enum Handhelds {
   wonderswan = 47,
   wonderswanColor = 50,
 }
+
+export const handheldsAcronyms = {
+  gbav: Handhelds[20],
+  gba: Handhelds[13],
+  gbc: Handhelds[14],
+  gb: Handhelds[12],
+  gg: Handhelds[15],
+  ds: Handhelds[11],
+  vb: Handhelds[56],
+};
 
 export enum Computers {
   amiga = 57,

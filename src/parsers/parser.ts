@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 
 import { IParser, Pagination } from './parser.types';
-import { paginationSelector } from '../selectors/pagination.selector';
+import { paginationSelector } from '../selectors/pagination';
 
 export abstract class AbstractParser<TOutput, TParseOptions = undefined> implements IParser<TOutput, TParseOptions> {
   protected $: cheerio.Root;
@@ -20,7 +20,7 @@ export abstract class AbstractParser<TOutput, TParseOptions = undefined> impleme
     this.$ = cheerio.load(htmlString, useOptions ? options : {});
   }
 
-  public abstract parse(options?: TParseOptions): TOutput;
+  public abstract parse(options: TParseOptions): TOutput;
 
   protected getPagination(collectionSize: number): Pagination {
     const { spanThisPage, paginatorChildren } = paginationSelector(this.$);

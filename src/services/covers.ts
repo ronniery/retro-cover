@@ -7,8 +7,14 @@ import path from 'node:path';
 
 import httpApi from './client/http-api';
 import { BASE_URL, DOWNLOAD_COVER, GAME_COVERS, GAME_PROFILE } from '../constants';
-import { GameCoverMetadataParser, GameCoverParser } from '../parsers/game-covers.parser';
-import { GameCover, GameCoverCollection, GameCoverMetadata, GetGameCoverOptions } from '../parsers';
+import { GameCoverMetadataParser, GameCoverParser } from '../parsers/game-covers';
+import { GameCover, GameCoverMetadata, GameCoverMetadataOptions } from '../parsers';
+
+export type GameCoverCollection = {
+  [gameId: string]: Omit<GameCoverMetadata, 'drafts'> | string;
+};
+
+export type GetGameCoverOptions = Omit<GameCoverMetadataOptions, 'gameId'>;
 
 const HOME_TITLE = 'The Cover Project > Home' as const;
 

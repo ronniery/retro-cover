@@ -4,10 +4,12 @@ import isDate from 'lodash.isdate';
 import { decode } from 'html-entities';
 
 import { AbstractParser } from './parser';
-import { GameAdditions, PlatformAdditionsOptions, AddedGame, CountryDictionary } from './parser.types';
+import { GameAdditions, PlatformAdditionsOptions, AddedGame } from './parser.types';
 
 import { platformAdditionsSelectors } from '../selectors';
 import { projectCountries } from '../utils/project-countries';
+
+export type CountryDictionary = { [key: string]: string };
 
 export class PlatformAdditionsParser extends AbstractParser<GameAdditions, PlatformAdditionsOptions> {
   private readonly headerRegex = /(?<platform>.+?) Game Covers \((?<availableCovers>\d+) Covers\) > Newest Covers/;
@@ -15,7 +17,7 @@ export class PlatformAdditionsParser extends AbstractParser<GameAdditions, Platf
   public parse(options?: PlatformAdditionsOptions): GameAdditions {
     const { newsHeader } = platformAdditionsSelectors(this.$);
     const headerText = newsHeader.text();
-    const headerMatch = headerText.match(this.headerRegex);
+    const headerMatch = decode(headerText).match(this.headerRegex);
 
     const platformInfo = {
       platform: headerMatch?.groups?.platform || null,
@@ -47,7 +49,7 @@ export class PlatformAdditionsParser extends AbstractParser<GameAdditions, Platf
       if (ignoreEmpty && /x\sempty/i.test(inputText)) return accumulator;
 
       const [, nameMatch] = inputText.match(/>(.+?)</) ?? [];
-      const [, formatMatch] = inputText.match(/>\s\(([a-z]+)\/?/i) ?? [];
+      const [, formatMatch] = inputText.replace(/^<a.*a>/, '').match(/\(([a-z]+)(\)|\/)/i) ?? [];
       const [, countryMatch] = inputText.match(/flags\/(.+?).png/) ?? [];
 
       const game = {

@@ -1,15 +1,17 @@
 import {
   GameAdditions,
-  Platforms,
   PlatformAdditionsParser,
   PlatformAdditionsOptions,
-  PlatformCoverOptions,
   PlatformCoverParser,
   Matcher,
 } from '../parsers';
-import { PLATFORM_ADDITIONS, PLATFORM_COVERS } from '../constants';
+import { PLATFORM_ADDITIONS, PLATFORM_COVERS, Platforms } from '../constants';
 
 import httpApi from './client/http-api';
+
+export type GetPlatformCoverOptions = {
+  page?: number;
+};
 
 export const getAdditionsByPlatform = async (
   platform: Platforms,
@@ -28,7 +30,7 @@ export const getAdditionsByPlatform = async (
 export const getCoversByPlatform = async (
   platform: Platforms,
   matcher: Matcher = 'A',
-  options?: PlatformCoverOptions,
+  options?: GetPlatformCoverOptions,
 ): Promise<GameAdditions> => {
   const query: { cat_id: string; view: Matcher; page?: string } = {
     cat_id: platform.toString(),

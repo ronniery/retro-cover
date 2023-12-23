@@ -1,8 +1,13 @@
 import { SEARCH_GAMES } from '../constants';
-import { SearchGameParser, SearchOfflineResult, SearchResult, ServiceResult } from '../parsers';
+import { SearchGameParser, SearchResult, ServiceResult } from '../parsers';
 import coverProjectGames from '../project-games.json';
 
 import httpApi from './client/http-api';
+
+export type SearchOfflineResult = Array<{
+  gameId: string;
+  gameName: string;
+}>;
 
 export const searchOffline = async (gameTitle: string): Promise<SearchOfflineResult> => {
   const { games } = coverProjectGames;

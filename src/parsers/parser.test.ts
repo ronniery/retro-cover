@@ -1,17 +1,7 @@
-import { paginationSelector } from '../selectors/pagination.selector';
+import * as selector from '../selectors/pagination';
 import { AbstractParser } from './parser';
 import { getPaginationHtml } from './parser.mock';
 import { Pagination } from './parser.types';
-
-// TODO: still need to work on this
-// jest.mock('../selectors/pagination.selector', () => ({
-//   paginationSelector: jest.fn(() => ({
-//     spanThisPage: { text: jest.fn().mockReturnValue('1') },
-//     paginatorChildren: {
-//       last: jest.fn().mockReturnValue({ text: (): string => '3' }),
-//     },
-//   })),
-// }));
 
 class ConcreteParser extends AbstractParser<string> {
   public parse(): string {
@@ -45,8 +35,15 @@ describe('AbstractParser', () => {
   });
 
   it('should call paginationSelector while getting pagination', () => {
-    expect(typeof parser.pagination).toBe('object');
-    expect(paginationSelector).toHaveBeenCalledWith(parser.cheerio);
+    throw new Error('TODO')
+    const mockPagination = jest.fn();
+    jest.spyOn(selector, 'paginationSelector').mockImplementation(mockPagination);
+
+    const localParser = new ConcreteParser(`<html></html>`);
+    const _parsedOutput = localParser.parse();
+
+    expect(typeof localParser.pagination).toBe('object');
+    expect(mockPagination).toHaveBeenCalledWith(localParser.cheerio);
   });
 
   it('should validate the generated pagination for starting navigation', () => {

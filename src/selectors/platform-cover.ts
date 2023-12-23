@@ -1,4 +1,4 @@
-type PlatformCoversSelectors = {
+export type PlatformCoversSelectors = {
   newsHeader: cheerio.Cheerio;
   pageBodyLines: cheerio.Cheerio;
   spanArticleText: string;

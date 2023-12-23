@@ -1,4 +1,4 @@
-type PlatformAdditionsSelectors = {
+export type PlatformAdditionsSelectors = {
   smallArticleText: string;
   articleText: string;
   gameRows: cheerio.Cheerio;

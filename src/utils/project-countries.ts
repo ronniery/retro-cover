@@ -72,6 +72,7 @@ export const projectCountries = {
   er: 'Eritrea',
   es: 'Spain',
   et: 'Ethiopia',
+  eu: 'Europe',
   fi: 'Finland',
   fj: 'Fiji',
   fk: 'Falkland Islands (Malvinas)',

@@ -1,4 +1,4 @@
-type PaginatorSelectors = {
+export type PaginatorSelectors = {
   paginator: cheerio.Cheerio;
   paginatorChildren: cheerio.Cheerio;
   spanThisPage: cheerio.Cheerio;

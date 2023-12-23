@@ -3,8 +3,15 @@ import URL from 'node:url';
 import { AbstractParser } from './parser';
 
 import { BASE_URL } from '../constants';
-import { PlatformCover, ServiceResult } from './parser.types';
+import { ServiceResult } from './parser.types';
 import { platformCoversSelectors } from '../selectors';
+
+export type PlatformCover = {
+  gameTitle: string;
+  covers: number;
+  manuals: number;
+  source: string;
+};
 
 export class PlatformCoverParser extends AbstractParser<ServiceResult<PlatformCover[]>> {
   private readonly availableAssets = /<!--.*NumCovers: (\d+) \| NumManuals: (\d+)-->/;

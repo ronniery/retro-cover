@@ -1,4 +1,4 @@
-type SearchGameSelectors = {
+export type SearchGameSelectors = {
   newsHeader: cheerio.Cheerio;
   pageBody: cheerio.Cheerio;
 };

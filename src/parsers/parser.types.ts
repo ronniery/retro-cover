@@ -1,7 +1,4 @@
-import { Computers, Consoles, Handhelds } from '../constants';
 import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
-
-export type Platforms = Consoles | Handhelds | Computers;
 
 export type Matcher =
   | '#'
@@ -42,15 +39,10 @@ export type Pagination = {
 
 export type SearchResult = {
   name: string;
-  platform: Platforms;
+  platform: string;
   source: string;
   gameId: number;
 };
-
-export type SearchOfflineResult = Array<{
-  gameId: string;
-  gameName: string;
-}>;
 
 export type ServiceResult<TResult> = {
   searchTerm: string;
@@ -74,9 +66,9 @@ export type GameAdditions = {
 };
 
 export type PlatformAdditionsOptions = {
-  order: { [key in keyof AddedGame]: 'asc' | 'desc' };
-  ignoreEmpty: boolean;
-  startingAt: Date;
+  order?: Partial<{ [key in keyof AddedGame]: 'asc' | 'desc' }>;
+  ignoreEmpty?: boolean;
+  startingAt?: Date;
 };
 
 export type KnownFormats = 'PAL' | 'NTSC' | 'NTSC-J';
@@ -93,16 +85,10 @@ export type GameCover = {
 
 export type GameCoverMetadataOptions = {
   gameId: string | number;
-  includeManuals: boolean;
-  firstAvailable: boolean;
-  onlyFormats: Array<KnownFormats>;
-  onlyRegions: Array<ProjectCountiesAlpha2>;
-};
-
-export type GetGameCoverOptions = Omit<GameCoverMetadataOptions, 'gameId'>;
-
-export type GameCoverCollection = {
-  [gameId: string]: Omit<GameCoverMetadata, 'drafts'> | string;
+  includeManuals?: boolean;
+  firstAvailable?: boolean;
+  onlyFormats?: Array<KnownFormats>;
+  onlyRegions?: Array<ProjectCountiesAlpha2>;
 };
 
 export type DraftGameCover = {
@@ -111,27 +97,19 @@ export type DraftGameCover = {
   country: ProjectCountiesAlpha2;
 };
 
+export type GameManual = {
+  source: string;
+  language: string;
+}
+
 export type GameCoverMetadata = {
   drafts: Array<DraftGameCover>;
   covers: Array<GameCover>;
-  manuals: string[];
+  manuals: GameManual[];
   gameTitle: string;
   source: string;
   platform: string | undefined;
 };
-
-export type PlatformCover = {
-  gameTitle: string;
-  covers: number;
-  manuals: number;
-  source: string;
-};
-
-export type PlatformCoverOptions = {
-  page?: number;
-};
-
-export type CountryDictionary = { [key: string]: string };
 
 export interface IParser<TOutput, TParseOptions = undefined> {
   parse(options?: TParseOptions): TOutput;

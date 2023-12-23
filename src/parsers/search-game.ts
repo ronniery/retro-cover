@@ -1,12 +1,17 @@
 import URL from 'node:url';
 
-import { Platforms, SearchResult, ServiceResult } from './parser.types';
+import { SearchResult, ServiceResult } from './parser.types';
 import { AbstractParser } from './parser';
 
 import { searchGameSelectors } from '../selectors';
-import { BASE_URL } from '../constants';
+import { BASE_URL, consoleAcronyms, handheldsAcronyms } from '../constants';
 
 export class SearchGameParser extends AbstractParser<ServiceResult<SearchResult[]>> {
+  private gameAcronyms: Record<string, string> = {
+    ...consoleAcronyms,
+    ...handheldsAcronyms
+  }
+
   public parse(): ServiceResult<SearchResult[]> {
     const { newsHeader } = searchGameSelectors(this.$);
     const [, searchTerm] =
@@ -32,13 +37,16 @@ export class SearchGameParser extends AbstractParser<ServiceResult<SearchResult[
       .map((element) => {
         const $a = this.$(element).find('a');
         const href = $a.attr('href') ?? '';
-        const [, name, platform] = $a.text().match(/(.+?)\s\((.+?)\)/i) ?? [];
+        const [, name, platform] = $a.text().match(/^(.*?)(?:\(([^)]*)\))?$/i) ?? [];
+
         const source = URL.resolve(BASE_URL, href);
         const [, gameId] = href.match(/game_id=(.*)/) ?? [];
+        const lowerPlatform = platform.trim().toLowerCase()
+        const noacronym = this.gameAcronyms[lowerPlatform] || lowerPlatform;
 
         return {
           name,
-          platform: platform as unknown as Platforms,
+          platform: noacronym.toUpperCase(),
           source,
           gameId: +gameId,
         };

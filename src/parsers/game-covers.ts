@@ -3,24 +3,31 @@ import { decode } from 'html-entities';
 
 import { BASE_URL, GAME_COVERS } from '../constants';
 import { AbstractParser } from './parser';
-import { DraftGameCover, GameCover, GameCoverMetadata, GameCoverMetadataOptions, KnownFormats } from './parser.types';
-import { gameCoverSelector } from '../selectors/game-covers.selector';
+import { DraftGameCover, GameCover, GameCoverMetadata, GameCoverMetadataOptions, GameManual, KnownFormats } from './parser.types';
+import { gameCoverSelector } from '../selectors/game-covers';
 import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
 
 export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, GameCoverMetadataOptions> {
-  public parse(options?: GameCoverMetadataOptions): GameCoverMetadata {
+  public parse(options: GameCoverMetadataOptions): GameCoverMetadata {
     const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } = options ?? {};
     const { firstCover, allCovers, newsTableGamePlatform, newsTableGameTitle } = gameCoverSelector(this.$);
     const elements = firstAvailable ? this.$(firstCover) : this.$(allCovers);
 
     let drafts: Array<DraftGameCover> = [];
-    let manuals: string[] = [];
+    let manuals: GameManual[] = [];
     for (const el of elements.toArray()) {
       const [a, img] = this.$(el).find('a, span img').toArray();
       const url = this.$(a).attr('href') ?? '';
+      const language = this.$(a).find('span').text();
 
       if (url.includes('/manuals/')) {
-        manuals = [...manuals, URL.resolve(BASE_URL, this.$(a).attr('href') ?? '')];
+        manuals = [
+          ...manuals,
+          {
+            source: URL.resolve(BASE_URL, url),
+            language: language.replace('Language: ', ''),
+          },
+        ];
       } else {
         const spanHtml = this.$(el).find('span')?.html();
         const [, format] = spanHtml?.match(/^format:\s([a-z]+)/i) ?? [];
@@ -50,7 +57,7 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
     const coverMetadata = {
       covers: [],
       drafts,
-      manuals: [] as string[],
+      manuals: [] as GameManual[],
       source: `${BASE_URL}${GAME_COVERS}?cover_id=${gameId}`,
       gameTitle: this.$(newsTableGameTitle)?.html()?.trim() ?? '',
       platform: this.$(newsTableGamePlatform)?.html()?.trim(),
@@ -65,11 +72,11 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
 }
 
 export class GameCoverParser extends AbstractParser<GameCover> {
-  private readonly secondNewsTable: string = '.newsTable tbody table td:nth-child(2)';
+  private readonly newsTablePageBody: string = '.newsTable td.pageBody';
 
   public parse(): GameCover {
     const [description, format, createdBy, region, caseType, , downloadSection] =
-      this.$(this.secondNewsTable)?.html()?.split('<br>') ?? [];
+      this.$(this.newsTablePageBody).last()?.html()?.split('<br>') ?? [];
     const downloadedTimesText = downloadSection.replace(/^.*ded|times.*/gi, '').trim();
     const downloadUrl = this.$(downloadSection).find('a').attr('href');
 
