@@ -1,8 +1,23 @@
 import nock from 'nock';
-import { BASE_URL, GAME_PROFILE } from '../constants';
+import path from 'node:path';
+import os from 'node:os';
+import { promises as fs } from 'node:fs';
+import { randomUUID, createHash } from 'node:crypto';
+
+import { BASE_URL, DOWNLOAD_COVER, GAME_PROFILE } from '../constants';
 import { GameCover, GameCoverMetadata } from '../types';
-import { getGameCovers } from './covers';
+import { downloadCovers, getGameCovers } from './covers';
 import { mockGameCovers } from './covers.mock';
+
+type TemporaryFile = {
+  base64: string;
+  type: string;
+  size: number;
+  getFullPath: () => string;
+  getFileName: () => string;
+  relativePath: string;
+  sha256?: string;
+};
 
 describe('integration:services/covers.ts', () => {
   beforeEach(() => {
@@ -71,6 +86,60 @@ describe('integration:services/covers.ts', () => {
   });
 
   describe('downloadCovers', () => {
-    // TODO
+    let coverImage: TemporaryFile;
+    let filename: string;
+
+    beforeEach(async () => {
+      filename = randomUUID();
+      coverImage = {
+        type: 'png',
+        size: 228,
+        base64:
+          'iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAAsSAAALEgHS3X78AAAAAXNSR0IArs4c6QAAAIlJREFUKFNjZCARMJKonmHgNYBc8B/Z2SABXhER4UVfv37s/v+f5TkfH8+CDx8+5f7//59DUJC/8dWrN7EcHCyavLx8ha9fv4sB+4GXl7f08+fP3RwcHIp8fLwLPnz4mMvIyPidj49vyocPH8p+//59kZeXt+zz589dhDyN1UkkhSwhGzAMo70GAFOFLRfAXuAeAAAAAElFTkSuQmCC',
+        sha256: 'b4ae0a8683bbd68e24e442f7191d9743eaeb8ba45e4464ab0507e690f840a6fb',
+        relativePath: await fs.realpath(os.tmpdir()),
+        getFileName: function () {
+          return `${filename}.${this.type}`;
+        },
+        getFullPath: function () {
+          return path.join(this.relativePath, `${this.getFileName()}`);
+        },
+      };
+
+      await fs.writeFile(coverImage.getFullPath(), Buffer.from(coverImage.base64, 'base64'));
+    })
+
+    afterEach(async () => {
+      try {
+        await fs.rm(coverImage.getFullPath());
+      } catch (_: unknown) { }
+    })
+
+    it('should download file correctly in the temp path', async () => {
+      const testPath = path.join(coverImage.relativePath, randomUUID());
+
+      nock(BASE_URL)
+        .get(DOWNLOAD_COVER)
+        .query({ cover_id: 'jest-game', src: 'cdn' })
+        .reply(200, await fs.readFile(coverImage.getFullPath(), 'binary'), {
+          'content-type': `image/${coverImage.type}`,
+          'content-length': coverImage.size.toString(),
+          'content-disposition': `attachment; filename=${coverImage.getFileName()}`,
+        });
+
+        try {
+          await downloadCovers(['jest-game'], testPath);
+
+          const hashSum = createHash('sha256');
+          hashSum.update(await fs.readFile(coverImage.getFullPath(), { encoding: 'binary' }));
+
+          const fileStat = await fs.stat(coverImage.getFullPath());
+          expect(fileStat.isFile()).toBeTrue();
+          expect(fileStat.size).toBe(coverImage.size);
+          expect(hashSum.digest('hex')).toBe(coverImage.sha256);
+        } finally {
+          await fs.rm(testPath, { recursive: true, force: true });
+        }
+    })
   });
 });

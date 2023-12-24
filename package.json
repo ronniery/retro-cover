@@ -2,6 +2,11 @@
   "name": "retro-cover",
   "version": "1.0.0",
   "description": "A node.js library to search, parse and fetch covers from https://www.thecoverproject.net/",
+  "exports": "./index.js",
+  "types": "./index.d.ts",
+  "engines": {
+    "node": ">=14.16"
+  },
   "scripts": {
     "test": "jest --coverage --runInBand",
     "build": "tsc -p tsconfig.build.json",
@@ -14,6 +19,10 @@
     "type": "git",
     "url": "git+https://github.com/ronniery/retro-cover.git"
   },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "keywords": [
     "retro",
     "game",
