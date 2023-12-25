@@ -6,7 +6,7 @@ bump_version () {
   required="^(\[publish\]) .*$"
 
   if ! [[ $message =~ $required ]]; then
-    npx bump minor
+    npx bump patch && git add .
   fi
 }
 
