@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx lint-staged
+bump_version () {
+  message="$(cat $1)"
+  required="^(\[publish\]) .*$"
+
+  if ! [[ $message =~ $required ]]; then
+    npx bump minor
+  fi
+}
+
+npx lint-staged && bump_version

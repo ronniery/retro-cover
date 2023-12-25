@@ -27,7 +27,7 @@ jobs:
     - run: npm run build --if-present
 
   publish:
-    if: "!contains(github.event.head_commit.message, '[publish]')"
+    if: "contains(github.event.head_commit.message, '[publish]')"
     needs: build
     runs-on: ubuntu-latest
     steps:
