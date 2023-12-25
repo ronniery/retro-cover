@@ -18,5 +18,8 @@
     "source.addMissingImports": "explicit",
     "source.fixAll": "explicit",
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "conventionalCommits.scopes": [
+    "[publish]"
+  ]
 }
