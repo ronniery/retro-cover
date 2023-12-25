@@ -1,7 +1,7 @@
-import { Computers, Consoles, Handhelds } from "../constants";
+import { Computers, Consoles, Handhelds } from '../constants';
 import { Pagination, SearchResult } from '../types';
-import { SearchGameParser } from "./search-game";
-import { searches } from "./search-game.mock";
+import { SearchGameParser } from './search-game';
+import { searches } from './search-game.mock';
 
 describe('parser/search-game.ts | SearchGameParser', () => {
   const { superMario } = searches;
@@ -36,11 +36,11 @@ describe('parser/search-game.ts | SearchGameParser', () => {
           gameId: expect.any(Number),
           platform: expect.toBeOneOf(allConsoles),
           name: expect.any(String),
-          source: expect.any(String)
+          source: expect.any(String),
         }),
       ]),
     );
-  })
+  });
 
   it('should parse the second page of "super mario" search', () => {
     const searchResult = new SearchGameParser(superMario.page2).parse();

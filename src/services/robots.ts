@@ -2,53 +2,47 @@ import axios from 'axios';
 import robotsParser, { Robot } from 'robots-parser';
 
 import { ROBOTS, BASE_URL } from '../constants';
+import isEmpty from 'lodash.isempty';
 
-class RobotsCache {
-  public online: string | undefined;
-  public readonly offline: string;
-  public readonly updatedAt: string;
+export const FULL_PATH = `${BASE_URL}${ROBOTS}`;
+// updatedAt = '2023-12-16T15:12:17.811Z'
+export const LOCAL_ROBOTS = `
+  User-agent: *
+  Disallow: /includes/
+  Disallow: /images/
+  Disallow: /uploads/
+  Disallow: *.jpg$
+  Disallow: *.gif$
+  Disallow: /download_cover.php
+  Disallow: /forums/
 
-  constructor() {
-    this.updatedAt = '2023-12-16T15:12:17.811Z';
-    this.offline = `
-      User-agent: *
-      Disallow: /includes/
-      Disallow: /images/
-      Disallow: /uploads/
-      Disallow: *.jpg$
-      Disallow: *.gif$
-      Disallow: /download_cover.php
-      Disallow: /forums/
+  User-agent: Exabot
+  Disallow: /forums/
+`;
 
-      User-agent: Exabot
-      Disallow: /forums/
-    `;
-  }
-}
-
-const fullPath = `${BASE_URL}${ROBOTS}`;
-const cache = new RobotsCache();
+let cache: Robot | null = null;
 
 const fetchOnlineRobots = async (): Promise<string> => {
   let data;
 
   try {
-    if (cache.online !== undefined) return Promise.resolve(cache.online);
-
-    const response = await axios.get(fullPath, {
+    const response = await axios.get<string>(FULL_PATH, {
       headers: {
         'Content-Type': 'text/plain; charset=UTF-8',
       },
     });
 
-    cache.online = response.data;
     data = response.data;
   } catch (_) {
-    data = cache.offline;
+    data = LOCAL_ROBOTS;
   }
 
   return data;
 };
 
-export const getRobots = async (): Promise<Robot> =>
-  fetchOnlineRobots().then((robots) => robotsParser(fullPath, robots));
+export const getRobots = async (useCache = true): Promise<Robot> => {
+  if (!useCache) cache = null;
+  if (!isEmpty(cache)) return Promise.resolve(cache);
+
+  return fetchOnlineRobots().then((robots) => (cache = robotsParser(FULL_PATH, robots)));
+};

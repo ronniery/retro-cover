@@ -1,6 +1,6 @@
-import cheerio from 'cheerio'
+import cheerio from 'cheerio';
 
-import { GameCoverSelectors, gameCoverSelector } from './game-covers'
+import { GameCoverSelectors, gameCoverSelector } from './game-covers';
 
 describe('selectors/game-covers.ts | gameCoverSelector', () => {
   it('should correctly return game cover selectors', () => {

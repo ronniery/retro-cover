@@ -1,7 +1,7 @@
-import * as selector from '../selectors/pagination';
 import { AbstractParser } from './parser';
 import { getPaginationHtml } from './parser.mock';
 import { Pagination } from '../types';
+import * as selector from '../selectors/pagination';
 
 class ConcreteParser extends AbstractParser<string> {
   public parse(): string {
@@ -35,15 +35,21 @@ describe('parsers/parser | AbstractParser', () => {
   });
 
   it('should call paginationSelector while getting pagination', () => {
-    throw new Error('TODO');
-    const mockPagination = jest.fn();
-    jest.spyOn(selector, 'paginationSelector').mockImplementation(mockPagination);
+    const mockPagination = jest.fn(() => ({
+      spanThisPage: { text: jest.fn() } as unknown as cheerio.Cheerio,
+      paginatorChildren: { toArray: () => [] } as unknown as cheerio.Cheerio,
+      paginator: jest.fn() as unknown as cheerio.Cheerio,
+    }));
 
+    const paginationSpy = jest.spyOn(selector, 'paginationSelector').mockImplementation(mockPagination);
     const localParser = new ConcreteParser(`<html></html>`);
-    const _parsedOutput = localParser.parse();
+    const _ = localParser.parse();
 
     expect(typeof localParser.pagination).toBe('object');
     expect(mockPagination).toHaveBeenCalledWith(localParser.cheerio);
+    expect(mockPagination).toHaveBeenCalledOnce();
+
+    paginationSpy.mockRestore();
   });
 
   it('should validate the generated pagination for starting navigation', () => {

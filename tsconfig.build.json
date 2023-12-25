@@ -15,5 +15,12 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "testSetup.ts"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.mock.ts", "src/**/*.integration.test.ts", "node_modules", "testSetup.ts", "src/types.ts"]
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.mock.ts",
+    "src/**/*.integration.test.ts",
+    "node_modules",
+    "testSetup.ts",
+    "src/types.ts"
+  ]
 }

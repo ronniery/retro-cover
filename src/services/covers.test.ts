@@ -56,15 +56,15 @@ describe('unit:services/covers.ts', () => {
   });
 
   describe('downloadCovers', () => {
-      let consoleSpy: jest.SpyInstance;
+    let consoleSpy: jest.SpyInstance;
 
-     beforeEach(() => {
-       consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-     });
+    beforeEach(() => {
+      consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
 
-     afterEach(() => {
-       consoleSpy.mockRestore();
-     });
+    afterEach(() => {
+      consoleSpy.mockRestore();
+    });
 
     it('should download covers successfully', async () => {
       (createFullOutputPath as jest.Mock).mockReturnValue('/path/to/output');

@@ -49,10 +49,6 @@ export const createFullOutputPath = (outputPath: string): string => {
 export const downloadFile = async (downloadUrl: string): Promise<AxiosResponse<fs.WriteStream, unknown>> => {
   return axios.get(downloadUrl, {
     responseType: 'stream',
-    onDownloadProgress(progressEvent) {
-      progressEvent.progress;
-      console.log(`Total size: ${progressEvent.total}`);
-    },
     httpsAgent: new https.Agent({
       rejectUnauthorized: false,
     }),

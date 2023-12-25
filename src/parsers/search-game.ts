@@ -9,8 +9,8 @@ import { BASE_URL, consoleAcronyms, handheldsAcronyms } from '../constants';
 export class SearchGameParser extends AbstractParser<ServiceResult<SearchResult[]>> {
   private gameAcronyms: Record<string, string> = {
     ...consoleAcronyms,
-    ...handheldsAcronyms
-  }
+    ...handheldsAcronyms,
+  };
 
   public parse(): ServiceResult<SearchResult[]> {
     const { newsHeader } = searchGameSelectors(this.$);
@@ -41,7 +41,7 @@ export class SearchGameParser extends AbstractParser<ServiceResult<SearchResult[
 
         const source = URL.resolve(BASE_URL, href);
         const [, gameId] = href.match(/game_id=(.*)/) ?? [];
-        const lowerPlatform = platform.trim().toLowerCase()
+        const lowerPlatform = platform.trim().toLowerCase();
         const noacronym = this.gameAcronyms[lowerPlatform] || lowerPlatform;
 
         return {

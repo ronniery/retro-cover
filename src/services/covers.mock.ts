@@ -1,4 +1,19 @@
-export const mockGameCovers = () => ({
+type MockGameCover = {
+  marioGolf: {
+    cover1: {
+      extras: string;
+      coverId: number;
+      html: string;
+    };
+    cover2: {
+      extras: string;
+      coverId: number;
+      html: string;
+    };
+  };
+};
+
+export const mockGameCovers = (): MockGameCover => ({
   marioGolf: {
     cover1: {
       extras: 'Created by: wshbrngr',

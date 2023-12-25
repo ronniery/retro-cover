@@ -119,21 +119,6 @@ describe('GameCoverParser', () => {
   it('should parse Fight Night cover', () => {
     const cover = new GameCoverParser(fightNight.html).parse();
 
-     expect(cover).toHaveProperty('description', 'Retail Cover');
-     expect(cover).toHaveProperty('format', 'NTSC');
-     expect(cover).toHaveProperty('createdBy', 'Lumberjack42');
-     expect(cover).toHaveProperty('region', 'United States');
-     expect(cover).toHaveProperty('caseType', 'Universal Game Case');
-     expect(cover).toHaveProperty('downloadedTimes', 1067);
-     expect(cover).toHaveProperty(
-       'downloadUrl',
-       'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=14022',
-     );
-  })
-
-  it('should parse Zenji cover', () => {
-    const cover = new GameCoverParser(fightNight.html).parse();
-
     expect(cover).toHaveProperty('description', 'Retail Cover');
     expect(cover).toHaveProperty('format', 'NTSC');
     expect(cover).toHaveProperty('createdBy', 'Lumberjack42');
@@ -144,5 +129,20 @@ describe('GameCoverParser', () => {
       'downloadUrl',
       'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=14022',
     );
-  })
+  });
+
+  it('should parse Zenji cover', () => {
+    const cover = new GameCoverParser(zenji.html).parse();
+
+    expect(cover).toHaveProperty('description', 'Retail Cover');
+    expect(cover).toHaveProperty('format', 'NTSC');
+    expect(cover).toHaveProperty('createdBy', 'Lumberjack42');
+    expect(cover).toHaveProperty('region', 'United States');
+    expect(cover).toHaveProperty('caseType', 'Universal Game Case');
+    expect(cover).toHaveProperty('downloadedTimes', 604);
+    expect(cover).toHaveProperty(
+      'downloadUrl',
+      'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=13661',
+    );
+  });
 });

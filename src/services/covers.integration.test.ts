@@ -56,7 +56,7 @@ describe('integration:services/covers.ts', () => {
       expect(jestGame).toHaveProperty('gameTitle', 'Mario Golf: Toadstool Tour');
       expect(jestGame).toHaveProperty('source', 'http://www.thecoverproject.net/view.php?cover_id=jestGame');
 
-      const { covers } = jestGame as { covers:Array<GameCover>};
+      const { covers } = jestGame as { covers: Array<GameCover> };
       expect(covers).toBeArray();
       expect(covers.length).toBe(2);
 
@@ -98,22 +98,24 @@ describe('integration:services/covers.ts', () => {
           'iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAAsSAAALEgHS3X78AAAAAXNSR0IArs4c6QAAAIlJREFUKFNjZCARMJKonmHgNYBc8B/Z2SABXhER4UVfv37s/v+f5TkfH8+CDx8+5f7//59DUJC/8dWrN7EcHCyavLx8ha9fv4sB+4GXl7f08+fP3RwcHIp8fLwLPnz4mMvIyPidj49vyocPH8p+//59kZeXt+zz589dhDyN1UkkhSwhGzAMo70GAFOFLRfAXuAeAAAAAElFTkSuQmCC',
         sha256: 'b4ae0a8683bbd68e24e442f7191d9743eaeb8ba45e4464ab0507e690f840a6fb',
         relativePath: await fs.realpath(os.tmpdir()),
-        getFileName: function () {
+        getFileName: function (): string {
           return `${filename}.${this.type}`;
         },
-        getFullPath: function () {
+        getFullPath: function (): string {
           return path.join(this.relativePath, `${this.getFileName()}`);
         },
       };
 
       await fs.writeFile(coverImage.getFullPath(), Buffer.from(coverImage.base64, 'base64'));
-    })
+    });
 
     afterEach(async () => {
       try {
         await fs.rm(coverImage.getFullPath());
-      } catch (_: unknown) { }
-    })
+      } catch (e: unknown) {
+        console.error("Can't remove file ", e);
+      }
+    });
 
     it('should download file correctly in the temp path', async () => {
       const testPath = path.join(coverImage.relativePath, randomUUID());
@@ -127,19 +129,19 @@ describe('integration:services/covers.ts', () => {
           'content-disposition': `attachment; filename=${coverImage.getFileName()}`,
         });
 
-        try {
-          await downloadCovers(['jest-game'], testPath);
+      try {
+        await downloadCovers(['jest-game'], testPath);
 
-          const hashSum = createHash('sha256');
-          hashSum.update(await fs.readFile(coverImage.getFullPath(), { encoding: 'binary' }));
+        const hashSum = createHash('sha256');
+        hashSum.update(await fs.readFile(coverImage.getFullPath(), { encoding: 'binary' }));
 
-          const fileStat = await fs.stat(coverImage.getFullPath());
-          expect(fileStat.isFile()).toBeTrue();
-          expect(fileStat.size).toBe(coverImage.size);
-          expect(hashSum.digest('hex')).toBe(coverImage.sha256);
-        } finally {
-          await fs.rm(testPath, { recursive: true, force: true });
-        }
-    })
+        const fileStat = await fs.stat(coverImage.getFullPath());
+        expect(fileStat.isFile()).toBeTrue();
+        expect(fileStat.size).toBe(coverImage.size);
+        expect(hashSum.digest('hex')).toBe(coverImage.sha256);
+      } finally {
+        await fs.rm(testPath, { recursive: true, force: true });
+      }
+    });
   });
 });

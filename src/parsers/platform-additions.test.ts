@@ -58,7 +58,7 @@ describe('parser/platform-additions.ts PlatformAdditionsParser', () => {
     expect(platformInfo).toBeObject();
     expect(platformInfo).toHaveProperty('platform', 'Playstation 3');
     expect(platformInfo).toHaveProperty('availableCovers', 1275);
-  })
+  });
 
   it('should parse Atari Lynx additions', () => {
     const platformAdditions = new PlatformAdditionsParser(atariLynx).parse();
@@ -116,7 +116,7 @@ describe('parser/platform-additions.ts PlatformAdditionsParser', () => {
 
   it('should parse the game additions ignoring empty items', () => {
     const platformAdditions = new PlatformAdditionsParser(playstation3).parse({
-      ignoreEmpty: true
+      ignoreEmpty: true,
     });
 
     expect(platformAdditions).toBeObject();
@@ -147,8 +147,8 @@ describe('parser/platform-additions.ts PlatformAdditionsParser', () => {
     const unordered = new PlatformAdditionsParser(playstation3).parse();
     const ordered = new PlatformAdditionsParser(playstation3).parse({
       order: {
-        country: 'asc'
-      }
+        country: 'asc',
+      },
     });
 
     expect(ordered.addedGames).toBeArray();

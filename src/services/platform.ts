@@ -1,7 +1,4 @@
-import {
-  PlatformAdditionsParser,
-  PlatformCoverParser
-} from '../parsers';
+import { PlatformAdditionsParser, PlatformCoverParser } from '../parsers';
 import { PLATFORM_ADDITIONS, PLATFORM_COVERS, Platforms } from '../constants';
 
 import httpApi from './client/http-api';

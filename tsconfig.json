@@ -13,12 +13,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts",
-    "testSetup.ts",
-    "node_modules/jest-extended/types/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.ts", "testSetup.ts", "node_modules/jest-extended/types/**/*.d.ts"],
+  "exclude": ["node_modules"]
 }

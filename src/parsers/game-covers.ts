@@ -16,7 +16,7 @@ import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-c
 
 export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, GameCoverMetadataOptions> {
   public parse(options: GameCoverMetadataOptions): GameCoverMetadata {
-    const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } = options ?? {};
+    const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } = options;
     const { firstCover, allCovers, newsTableGamePlatform, newsTableGameTitle } = gameCoverSelector(this.$);
     const elements = firstAvailable ? this.$(firstCover) : this.$(allCovers);
 
@@ -24,7 +24,7 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
     let manuals: GameManual[] = [];
     for (const el of elements.toArray()) {
       const [a, img] = this.$(el).find('a, span img').toArray();
-      const url = this.$(a).attr('href') ?? '';
+      const url = this.$(a).attr('href') as string;
       const language = this.$(a).find('span').text();
 
       if (url.includes('/manuals/')) {
@@ -36,10 +36,11 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
           },
         ];
       } else {
-        const spanHtml = this.$(el).find('span')?.html();
-        const [, format] = spanHtml?.match(/^format:\s([a-z]+)/i) ?? [];
-        const imgSource = this.$(img).attr('src');
-        const [, country] = imgSource?.match(/flags\/([a-z]+)/) ?? [];
+        const span = this.$(el).find('span') as cheerio.Cheerio;
+        const spanHtml = span.html() as string;
+        const [, format] = spanHtml.match(/^format:\s([a-z]+)/i) as string[];
+        const imgSource = this.$(img).attr('src') as string;
+        const [, country] = imgSource.match(/flags\/([a-z]+)/) as string[];
         const coverId = url.replace(/v.*=/, '');
 
         drafts = [
@@ -61,13 +62,16 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
       drafts = drafts.filter(({ format }) => onlyFormats.includes(format));
     }
 
+    const titleHtml = this.$(newsTableGameTitle).html() as string;
+    const platformHtml = this.$(newsTableGamePlatform).html() as string;
+
     const coverMetadata = {
       covers: [],
       drafts,
       manuals: [] as GameManual[],
       source: `${BASE_URL}${GAME_COVERS}?cover_id=${gameId}`,
-      gameTitle: this.$(newsTableGameTitle)?.html()?.trim() ?? '',
-      platform: this.$(newsTableGamePlatform)?.html()?.trim(),
+      gameTitle: titleHtml.trim(),
+      platform: platformHtml.trim(),
     };
 
     if (includeManuals) {
@@ -82,8 +86,10 @@ export class GameCoverParser extends AbstractParser<GameCover> {
   private readonly newsTablePageBody: string = '.newsTable td.pageBody';
 
   public parse(): GameCover {
-    const [description, format, createdBy, region, caseType, , downloadSection] =
-      this.$(this.newsTablePageBody).last()?.html()?.split('<br>') ?? [];
+    const lastElement = this.$(this.newsTablePageBody).last();
+    const lastHtml = lastElement.html() as string;
+
+    const [description, format, createdBy, region, caseType, , downloadSection] = lastHtml.split('<br>') as string[];
     const downloadedTimesText = downloadSection.replace(/^.*ded|times.*/gi, '').trim();
     const downloadUrl = this.$(downloadSection).find('a').attr('href');
 

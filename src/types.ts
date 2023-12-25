@@ -1,4 +1,4 @@
-import { ProjectCountiesAlpha2, ProjectCountriesNames } from "./utils/project-countries";
+import { ProjectCountiesAlpha2, ProjectCountriesNames } from './utils/project-countries';
 
 export type GetGameCoverOptions = Omit<GameCoverMetadataOptions, 'gameId'>;
 

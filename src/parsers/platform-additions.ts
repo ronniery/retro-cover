@@ -16,12 +16,13 @@ export class PlatformAdditionsParser extends AbstractParser<GameAdditions, Platf
 
   public parse(options?: PlatformAdditionsOptions): GameAdditions {
     const { newsHeader } = platformAdditionsSelectors(this.$);
-    const headerText = newsHeader.text();
-    const headerMatch = decode(headerText).match(this.headerRegex);
+    const headerText = decode(newsHeader.text());
+    const headerMatch = headerText.match(this.headerRegex) as RegExpMatchArray;
+    const { groups = {} } = headerMatch;
 
     const platformInfo = {
-      platform: headerMatch?.groups?.platform || null,
-      availableCovers: headerMatch?.groups?.availableCovers ? parseInt(headerMatch.groups.availableCovers, 10) : null,
+      platform: groups.platform || null,
+      availableCovers: groups.availableCovers ? parseInt(groups.availableCovers, 10) : null,
     };
 
     let addedGames = this.getAllAdditions(options?.ignoreEmpty);
@@ -43,23 +44,24 @@ export class PlatformAdditionsParser extends AbstractParser<GameAdditions, Platf
     const { gameRows, articleText, smallArticleText } = platformAdditionsSelectors(this.$);
 
     return gameRows.toArray().reduce((accumulator, element): Array<AddedGame> => {
-      const tds = this.$(element).find('td');
-      const inputText = tds.eq(0).find(articleText).html() ?? '';
+      const allElements = this.$(element).find('td');
+      const header = allElements.eq(0).find(articleText) as cheerio.Cheerio;
+      const headerHtml = header.html() as string;
 
-      if (ignoreEmpty && /x\sempty/i.test(inputText)) return accumulator;
+      if (ignoreEmpty && /x\sempty/i.test(headerHtml)) return accumulator;
 
-      const [, nameMatch] = inputText.match(/>(.+?)</) ?? [];
-      const [, formatMatch] = inputText.replace(/^<a.*a>/, '').match(/\(([a-z]+)(\)|\/)/i) ?? [];
-      const [, countryMatch] = inputText.match(/flags\/(.+?).png/) ?? [];
+      const [, nameMatch = null] = headerHtml.match(/>(.+?)</) ?? [];
+      const [, formatMatch = null] = headerHtml.replace(/^<a.*a>/, '').match(/\(([a-z]+)(\)|\/)/i) ?? [];
+      const [, countryMatch = null] = headerHtml.match(/flags\/(.+?).png/) ?? [];
 
       const game = {
-        format: formatMatch ? formatMatch : null,
-        country: countryMatch ? this.convertCountryInitials(countryMatch) : null,
-        gameTitle: nameMatch ? decode(nameMatch) : null,
+        format: formatMatch,
+        country: this.convertCountryInitials(countryMatch),
+        gameTitle: decode(nameMatch),
         dateAdded: new Date(),
       };
 
-      const dateText = tds.eq(1).find(smallArticleText).text();
+      const dateText = allElements.eq(1).find(smallArticleText).text();
       const [, dateString] = dateText.match(/Added: (.+)/) ?? [];
 
       if (dateString && dateString !== 'Today') {
@@ -70,7 +72,9 @@ export class PlatformAdditionsParser extends AbstractParser<GameAdditions, Platf
     }, [] as Array<AddedGame>);
   }
 
-  private convertCountryInitials(initials: string): string | 'Unknown' {
+  private convertCountryInitials(initials: string | null): string | null | 'Unknown' {
+    if (initials === null) return initials;
+
     const countries: CountryDictionary = projectCountries;
     return countries[initials] ?? 'Unknown';
   }
