@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest --runInBand",
     "test:cover": "npm run test --coverage",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && rm dist/types.js",
     "lint": "eslint ./src --ext .js,.ts --ignore-path .eslintignore",
     "lint:fix": "npm run lint --fix",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
