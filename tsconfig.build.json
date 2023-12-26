@@ -21,6 +21,6 @@
     "src/**/*.integration.test.ts",
     "src/types.ts",
     "node_modules",
-    "testSetup.ts",
+    "testSetup.ts"
   ]
 }
