@@ -5,6 +5,7 @@ bump_version () {
   message="$(cat $1)"
   required="^(\[publish\]) .*$"
 
+  # Whenever you add `[publish]` tag inside git commit, the package version will be bumped
   if ! [[ $message =~ $required ]]; then
     npx bump patch && git add .
   fi
