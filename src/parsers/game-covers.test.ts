@@ -1,5 +1,6 @@
 import { gameCovers, gameMetadata } from './game-covers.mock';
 import { GameCoverMetadataParser, GameCoverParser } from './game-covers';
+
 import { DraftGameCover } from '../types';
 
 describe('parsers/game-covers.ts | GameCoverMetadataParser', () => {

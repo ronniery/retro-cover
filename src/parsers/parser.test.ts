@@ -1,5 +1,6 @@
 import { AbstractParser } from './parser';
 import { getPaginationHtml } from './parser.mock';
+
 import { Pagination } from '../types';
 import * as selector from '../selectors/pagination';
 

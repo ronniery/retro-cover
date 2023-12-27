@@ -16,12 +16,12 @@ jest.mock('./covers.helpers.ts', () => {
   };
 });
 
-import { getGameCovers, downloadCovers } from './covers';
-import { GameCoverMetadata } from '../types';
-
 import isEmpty from 'lodash.isempty';
 
 import { getGameCoverMetadataBy, getAllGameCovers, createFullOutputPath, downloadFile } from './covers.helpers';
+import { getGameCovers, downloadCovers } from './covers';
+
+import { GameCoverMetadata } from '../types';
 
 describe('unit:services/covers.ts', () => {
   beforeEach(() => {
@@ -93,33 +93,4 @@ describe('unit:services/covers.ts', () => {
       expect(consoleSpy).toHaveBeenCalledTimes(3);
     });
   });
-
-  // it('should get the game covers correctly', async () => {
-  //   const { marioGolf: { cover1, cover2} } = mockGameCovers();
-  //   const gameId = 'jestGame';
-
-  //   nock(BASE_URL).get(GAME_PROFILE).query({ game_id: gameId }).reply(200, cover1.html, {
-  //     'Content-type': 'text/html',
-  //   });
-
-  //   nock(BASE_URL).get(GAME_PROFILE).query({ cover: cover1.coverId }).reply(200, cover1.html, {
-  //     'Content-type': 'text/html',
-  //   });
-
-  //   nock(BASE_URL).get(GAME_PROFILE).query({ cover: cover2.coverId }).reply(200, cover2.html, {
-  //     'Content-type': 'text/html',
-  //   });
-
-  //   const gameCovers = await getGameCovers(gameId);
-  //   expect(gameCovers).toBeObject();
-  //   expect(gameCovers).toHaveProperty('jestGames');
-
-  //   const { jestGame } = gameCovers as { jestGame: Omit<GameCoverMetadata, 'drafts'> };
-  //   expect(jestGame).toBeObject();
-  //   expect(jestGame).toHaveProperty('manuals', []);
-  //   expect(jestGame).toHaveProperty('platform', 'GameCube');
-
-  //   expect(jestGame).toHaveProperty('covers');
-  //   e
-  // })
 });

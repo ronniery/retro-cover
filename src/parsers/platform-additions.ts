@@ -4,8 +4,8 @@ import isDate from 'lodash.isdate';
 import { decode } from 'html-entities';
 
 import { AbstractParser } from './parser';
-import { GameAdditions, PlatformAdditionsOptions, AddedGame } from '../types';
 
+import { GameAdditions, PlatformAdditionsOptions, AddedGame } from '../types';
 import { platformAdditionsSelectors } from '../selectors';
 import { projectCountries } from '../utils/project-countries';
 

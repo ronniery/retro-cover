@@ -1,7 +1,8 @@
-import { Computers, Consoles, Handhelds } from '../constants';
-import { Pagination, SearchResult } from '../types';
 import { SearchGameParser } from './search-game';
 import { searches } from './search-game.mock';
+
+import { Computers, Consoles, Handhelds } from '../constants';
+import { Pagination, SearchResult } from '../types';
 
 describe('parser/search-game.ts | SearchGameParser', () => {
   const { superMario } = searches;

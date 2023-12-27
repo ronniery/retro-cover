@@ -113,6 +113,13 @@ export type GameCoverMetadata = {
   platform: string | undefined;
 };
 
+export type PlatformCover = {
+  gameTitle: string;
+  covers: number;
+  manuals: number;
+  source: string;
+};
+
 export interface IParser<TOutput, TParseOptions = undefined> {
   parse(options?: TParseOptions): TOutput;
 }

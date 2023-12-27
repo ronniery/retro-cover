@@ -1,8 +1,9 @@
 import URL from 'node:url';
 import { decode } from 'html-entities';
 
-import { BASE_URL, GAME_COVERS } from '../constants';
 import { AbstractParser } from './parser';
+
+import { BASE_URL, GAME_COVERS } from '../constants';
 import {
   DraftGameCover,
   GameCover,

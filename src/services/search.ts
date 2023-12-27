@@ -1,14 +1,16 @@
+import httpApi from './client/http-api';
+
 import { ServiceResult, SearchResult } from '../types';
 import { SEARCH_GAMES } from '../constants';
 import { SearchGameParser } from '../parsers';
 import coverProjectGames from '../project-games.json';
 
-import httpApi from './client/http-api';
-
-export type SearchOfflineResult = Array<{
+export type OfflineResult = {
   gameId: string;
   gameName: string;
-}>;
+};
+
+export type SearchOfflineResult = Array<OfflineResult>;
 
 export const searchOffline = async (gameTitle: string): Promise<SearchOfflineResult> => {
   const { games } = coverProjectGames;
@@ -23,19 +25,22 @@ export const searchOffline = async (gameTitle: string): Promise<SearchOfflineRes
 export const searchOnline = async (
   gameTitle: string,
   options?: {
-    page?: number;
+    page?: string;
   },
 ): Promise<ServiceResult<SearchResult[]>> => {
-  const query = new URLSearchParams({
+  const query: { searchstring: string; page?: string } = {
     searchstring: gameTitle,
-  });
+  };
 
   if (options?.page) {
-    query.append('page', options.page.toString());
+    query.page = options.page;
   }
 
-  const { data } = await httpApi.get<ServiceResult<SearchResult[]>>(`${SEARCH_GAMES}?${query.toString()}`, {
-    transformResponse: (html: string) => new SearchGameParser(html).parse(),
+  const { data } = await httpApi.get<ServiceResult<SearchResult[]>>(SEARCH_GAMES, {
+    query,
+    transformResponse: (html: string) => {
+      return new SearchGameParser(html).parse();
+    },
   });
 
   return data;

@@ -3,15 +3,8 @@ import URL from 'node:url';
 import { AbstractParser } from './parser';
 
 import { BASE_URL } from '../constants';
-import { ServiceResult } from '../types';
+import { PlatformCover, ServiceResult } from '../types';
 import { platformCoversSelectors } from '../selectors';
-
-export type PlatformCover = {
-  gameTitle: string;
-  covers: number;
-  manuals: number;
-  source: string;
-};
 
 export class PlatformCoverParser extends AbstractParser<ServiceResult<PlatformCover[]>> {
   private readonly availableAssets = /<!--.*NumCovers: (\d+) \| NumManuals: (\d+)-->/;
@@ -22,7 +15,7 @@ export class PlatformCoverParser extends AbstractParser<ServiceResult<PlatformCo
       newsHeader
         .first()
         .text()
-        .match(/> (.+)/) ?? []; /*.trim();*/
+        .match(/> (.+)/) ?? [];
     const results = this.getAllCovers();
 
     return {
@@ -36,11 +29,12 @@ export class PlatformCoverParser extends AbstractParser<ServiceResult<PlatformCo
     const { pageBodyLines, spanArticleText } = platformCoversSelectors(this.$);
 
     return pageBodyLines.toArray().reduce((accumulator, element) => {
-      const $el = this.$(element).find(spanArticleText);
-      const [, covers, manuals] = $el?.html()?.match(this.availableAssets) ?? [];
+      const $el = this.$(element).find(spanArticleText) as cheerio.Cheerio;
+      const elementHtml = $el.html() as string;
+      const [, covers, manuals] = elementHtml.match(this.availableAssets) ?? [];
 
       const a = $el.find('a');
-      const source = URL.resolve(BASE_URL, this.$(a).attr('href') ?? '');
+      const source = URL.resolve(BASE_URL, this.$(a).attr('href') as string);
 
       return [
         ...accumulator,

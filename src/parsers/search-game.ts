@@ -1,8 +1,8 @@
 import URL from 'node:url';
 
-import { SearchResult, ServiceResult } from '../types';
 import { AbstractParser } from './parser';
 
+import { SearchResult, ServiceResult } from '../types';
 import { searchGameSelectors } from '../selectors';
 import { BASE_URL, consoleAcronyms, handheldsAcronyms } from '../constants';
 
@@ -36,7 +36,7 @@ export class SearchGameParser extends AbstractParser<ServiceResult<SearchResult[
       .toArray()
       .map((element) => {
         const $a = this.$(element).find('a');
-        const href = $a.attr('href') ?? '';
+        const href = $a.attr('href') as string;
         const [, name, platform] = $a.text().match(/^(.*?)(?:\(([^)]*)\))?$/i) ?? [];
 
         const source = URL.resolve(BASE_URL, href);

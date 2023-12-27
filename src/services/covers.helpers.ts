@@ -4,6 +4,7 @@ import https from 'node:https';
 import path from 'node:path';
 
 import httpApi from './client/http-api';
+
 import { GAME_COVERS, GAME_PROFILE } from '../constants';
 import { GameCoverMetadataParser, GameCoverParser } from '../parsers/game-covers';
 import { GameCover, GameCoverMetadata, GetGameCoverOptions } from '../types';

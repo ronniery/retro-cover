@@ -1,8 +1,8 @@
 import axios from 'axios';
+import isEmpty from 'lodash.isempty';
 import robotsParser, { Robot } from 'robots-parser';
 
 import { ROBOTS, BASE_URL } from '../constants';
-import isEmpty from 'lodash.isempty';
 
 export const FULL_PATH = `${BASE_URL}${ROBOTS}`;
 // updatedAt = '2023-12-16T15:12:17.811Z'

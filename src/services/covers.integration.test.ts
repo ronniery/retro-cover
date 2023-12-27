@@ -4,10 +4,11 @@ import os from 'node:os';
 import { promises as fs } from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
 
+import { mockGameCovers } from './covers.mock';
+
 import { BASE_URL, DOWNLOAD_COVER, GAME_PROFILE } from '../constants';
 import { GameCover, GameCoverMetadata } from '../types';
 import { downloadCovers, getGameCovers } from './covers';
-import { mockGameCovers } from './covers.mock';
 
 type TemporaryFile = {
   base64: string;
@@ -20,10 +21,6 @@ type TemporaryFile = {
 };
 
 describe('integration:services/covers.ts', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('getGameCovers', () => {
     it('should get the game covers correctly', async () => {
       const {
@@ -36,11 +33,11 @@ describe('integration:services/covers.ts', () => {
         'Content-type': 'text/html',
       });
 
-      nock(BASE_URL).get(GAME_PROFILE).query({ cover: cover1.coverId }).reply(200, cover1.html, {
+      nock(BASE_URL).get(GAME_PROFILE).query({ cover_id: cover1.coverId }).reply(200, cover1.html, {
         'Content-type': 'text/html',
       });
 
-      nock(BASE_URL).get(GAME_PROFILE).query({ cover: cover2.coverId }).reply(200, cover2.html, {
+      nock(BASE_URL).get(GAME_PROFILE).query({ cover_id: cover2.coverId }).reply(200, cover2.html, {
         'Content-type': 'text/html',
       });
 
@@ -72,12 +69,12 @@ describe('integration:services/covers.ts', () => {
         },
         {
           description: 'Retail Cover',
-          format: 'NTSC',
-          createdBy: 'wshbrngr',
-          region: 'United States',
-          caseType: 'Gamecube Case',
-          downloadedTimes: 40808,
-          downloadUrl: 'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=8285',
+          format: 'PAL',
+          createdBy: 'Grumbleduke',
+          region: 'Great Britain',
+          caseType: 'DVD Case - Standard',
+          downloadedTimes: 1525,
+          downloadUrl: 'http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=9745',
         },
       ].forEach((cover, coverIndex) => {
         expect(covers[coverIndex]).toStrictEqual(cover);

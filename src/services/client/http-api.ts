@@ -3,7 +3,6 @@ import https from 'node:https';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import axiosThrottle from 'axios-request-throttle';
-import { setupCache as axiosCache } from 'axios-cache-interceptor';
 
 import { getRobots } from '../../services';
 import { BASE_URL, ROBOTS } from '../../constants';
@@ -60,4 +59,4 @@ axiosThrottle.use(httpApi, {
   requestsPerSecond: 5,
 });
 
-export default axiosCache(httpApi);
+export default httpApi;

@@ -1,11 +1,11 @@
+import httpApi from './client/http-api';
+
 import { PlatformAdditionsParser, PlatformCoverParser } from '../parsers';
 import { PLATFORM_ADDITIONS, PLATFORM_COVERS, Platforms } from '../constants';
-
-import httpApi from './client/http-api';
-import { PlatformAdditionsOptions, GameAdditions, Matcher } from '../types';
+import { PlatformAdditionsOptions, GameAdditions, Matcher, ServiceResult, PlatformCover } from '../types';
 
 export type GetPlatformCoverOptions = {
-  page?: number;
+  page?: string;
 };
 
 export const getAdditionsByPlatform = async (
@@ -22,12 +22,14 @@ export const getAdditionsByPlatform = async (
   return data;
 };
 
+export type GetCoversByPlatformQuery = { cat_id: string; view: Matcher; page?: string };
+
 export const getCoversByPlatform = async (
   platform: Platforms,
   matcher: Matcher = 'A',
   options?: GetPlatformCoverOptions,
-): Promise<GameAdditions> => {
-  const query: { cat_id: string; view: Matcher; page?: string } = {
+): Promise<ServiceResult<PlatformCover[]>> => {
+  const query: GetCoversByPlatformQuery = {
     cat_id: platform.toString(),
     view: matcher,
   };
@@ -36,9 +38,11 @@ export const getCoversByPlatform = async (
     query.page = options.page.toString();
   }
 
-  const { data } = await httpApi.get<GameAdditions>(PLATFORM_COVERS, {
+  const { data } = await httpApi.get<ServiceResult<PlatformCover[]>>(PLATFORM_COVERS, {
     query,
-    transformResponse: (html: string) => new PlatformCoverParser(html).parse(),
+    transformResponse: (html: string) => {
+      return new PlatformCoverParser(html).parse();
+    },
   });
 
   return data;
