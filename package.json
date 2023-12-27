@@ -1,6 +1,6 @@
 {
   "name": "retro-cover",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A node.js library to search, parse and fetch covers from https://www.thecoverproject.net/",
   "engines": {
     "node": ">=14.16"
