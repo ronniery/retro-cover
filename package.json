@@ -1,6 +1,6 @@
 {
   "name": "retro-cover",
-  "version": "patch",
+  "version": "1.0.2",
   "description": "A node.js library to search, parse and fetch covers from https://www.thecoverproject.net/",
   "engines": {
     "node": ">=14.16"
@@ -12,6 +12,7 @@
     "lint": "npm-run-all lint:*",
     "lint:fix": "eslint ./src --ext .js,.ts --ignore-path .eslintignore --fix",
     "lint:prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "bump:patch": "npx bump patch",
     "prepare": "husky install",
     "prebuild": "rm -rf dist"
   },

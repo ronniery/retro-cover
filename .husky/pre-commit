@@ -11,4 +11,4 @@ bump_version () {
   fi
 }
 
-npx lint-staged && bump_version
+npx lint-staged
