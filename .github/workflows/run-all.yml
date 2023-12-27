@@ -34,7 +34,7 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: '12'
-    - run: npm install -g jest
+    - run: npm ci
     - name: publish code coverage
       uses: paambaati/codeclimate-action@v3.2.0
       env:
