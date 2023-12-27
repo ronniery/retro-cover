@@ -28,6 +28,7 @@ jobs:
 
   code-climate:
     needs: build
+    runs-on: ubuntu-latest
     steps:
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v3.2.0
