@@ -76,5 +76,8 @@
     "lodash.omit": "^4.5.0",
     "lodash.orderby": "^4.6.0",
     "robots-parser": "^3.0.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.3"
   }
 }
