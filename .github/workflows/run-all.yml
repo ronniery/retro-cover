@@ -35,8 +35,7 @@ jobs:
       with:
         node-version: '12'
     - run: npm install -g yarn
-    - name:
-    publish code coverage
+    - name: publish code coverage
       uses: paambaati/codeclimate-action@v3.2.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
