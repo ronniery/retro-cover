@@ -120,6 +120,8 @@ export type PlatformCover = {
   source: string;
 };
 
+export type PartialMetadata = { drafts: DraftGameCover[]; manuals: GameManual[] };
+
 export interface IParser<TOutput, TParseOptions = undefined> {
   parse(options?: TParseOptions): TOutput;
 }

@@ -5,12 +5,12 @@ import { AbstractParser } from './parser';
 
 import { BASE_URL, GAME_COVERS } from '../constants';
 import {
-  DraftGameCover,
   GameCover,
   GameCoverMetadata,
   GameCoverMetadataOptions,
   GameManual,
   KnownFormats,
+  PartialMetadata,
 } from '../types';
 import { gameCoverSelector } from '../selectors/game-covers';
 import { ProjectCountiesAlpha2, ProjectCountriesNames } from '../utils/project-countries';
@@ -20,22 +20,51 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
     const { firstAvailable, onlyFormats, onlyRegions, gameId, includeManuals } = options;
     const { firstCover, allCovers, newsTableGamePlatform, newsTableGameTitle } = gameCoverSelector(this.$);
     const elements = firstAvailable ? this.$(firstCover) : this.$(allCovers);
+    const partial = this.getPartialMetadata(elements);
 
-    let drafts: Array<DraftGameCover> = [];
-    let manuals: GameManual[] = [];
+    if (Array.isArray(onlyRegions)) {
+      partial.drafts = partial.drafts.filter(({ country }) => onlyRegions.includes(country));
+    }
+
+    if (Array.isArray(onlyFormats)) {
+      partial.drafts = partial.drafts.filter(({ format }) => onlyFormats.includes(format));
+    }
+
+    const titleHtml = this.$(newsTableGameTitle).html() as string;
+    const platformHtml = this.$(newsTableGamePlatform).html() as string;
+
+    const coverMetadata = {
+      covers: [],
+      drafts: partial.drafts,
+      manuals: [] as GameManual[],
+      source: `${BASE_URL}${GAME_COVERS}?cover_id=${gameId}`,
+      gameTitle: titleHtml.trim(),
+      platform: platformHtml.trim(),
+    };
+
+    if (includeManuals) {
+      coverMetadata.manuals = partial.manuals;
+    }
+
+    return coverMetadata;
+  }
+
+  private getPartialMetadata(elements: cheerio.Cheerio): PartialMetadata {
+    const output: PartialMetadata = {
+      drafts: [],
+      manuals: [],
+    };
+
     for (const el of elements.toArray()) {
       const [a, img] = this.$(el).find('a, span img').toArray();
       const url = this.$(a).attr('href') as string;
       const language = this.$(a).find('span').text();
 
       if (url.includes('/manuals/')) {
-        manuals = [
-          ...manuals,
-          {
-            source: URL.resolve(BASE_URL, url),
-            language: language.replace('Language: ', ''),
-          },
-        ];
+        output.manuals.push({
+          source: URL.resolve(BASE_URL, url),
+          language: language.replace('Language: ', ''),
+        });
       } else {
         const span = this.$(el).find('span') as cheerio.Cheerio;
         const spanHtml = span.html() as string;
@@ -44,42 +73,15 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
         const [, country] = imgSource.match(/flags\/([a-z]+)/) as string[];
         const coverId = url.replace(/v.*=/, '');
 
-        drafts = [
-          ...drafts,
-          {
-            coverId,
-            format: format as KnownFormats,
-            country: country as ProjectCountiesAlpha2,
-          },
-        ];
+        output.drafts.push({
+          coverId,
+          format: format as KnownFormats,
+          country: country as ProjectCountiesAlpha2,
+        });
       }
     }
 
-    if (Array.isArray(onlyRegions)) {
-      drafts = drafts.filter(({ country }) => onlyRegions.includes(country));
-    }
-
-    if (Array.isArray(onlyFormats)) {
-      drafts = drafts.filter(({ format }) => onlyFormats.includes(format));
-    }
-
-    const titleHtml = this.$(newsTableGameTitle).html() as string;
-    const platformHtml = this.$(newsTableGamePlatform).html() as string;
-
-    const coverMetadata = {
-      covers: [],
-      drafts,
-      manuals: [] as GameManual[],
-      source: `${BASE_URL}${GAME_COVERS}?cover_id=${gameId}`,
-      gameTitle: titleHtml.trim(),
-      platform: platformHtml.trim(),
-    };
-
-    if (includeManuals) {
-      coverMetadata.manuals = manuals;
-    }
-
-    return coverMetadata;
+    return output;
   }
 }
 
