@@ -5,6 +5,7 @@ import { AbstractParser } from './parser';
 
 import { BASE_URL, GAME_COVERS } from '../constants';
 import {
+  DraftGameCover,
   GameCover,
   GameCoverMetadata,
   GameCoverMetadataOptions,
@@ -66,22 +67,27 @@ export class GameCoverMetadataParser extends AbstractParser<GameCoverMetadata, G
           language: language.replace('Language: ', ''),
         });
       } else {
-        const span = this.$(el).find('span') as cheerio.Cheerio;
-        const spanHtml = span.html() as string;
-        const [, format] = spanHtml.match(/^format:\s([a-z]+)/i) as string[];
-        const imgSource = this.$(img).attr('src') as string;
-        const [, country] = imgSource.match(/flags\/([a-z]+)/) as string[];
-        const coverId = url.replace(/v.*=/, '');
-
-        output.drafts.push({
-          coverId,
-          format: format as KnownFormats,
-          country: country as ProjectCountiesAlpha2,
-        });
+        const draft = this.getDraftGameCover(el, img, url);
+        output.drafts.push(draft);
       }
     }
 
     return output;
+  }
+
+  private getDraftGameCover(el: cheerio.Element, img: cheerio.Element, url: string): DraftGameCover {
+    const span = this.$(el).find('span') as cheerio.Cheerio;
+    const spanHtml = span.html() as string;
+    const [, format] = spanHtml.match(/^format:\s([a-z]+)/i) as string[];
+    const imgSource = this.$(img).attr('src') as string;
+    const [, country] = imgSource.match(/flags\/([a-z]+)/) as string[];
+    const coverId = url.replace(/v.*=/, '');
+
+    return {
+      coverId,
+      format: format as KnownFormats,
+      country: country as ProjectCountiesAlpha2,
+    };
   }
 }
 
