@@ -7,31 +7,33 @@ jest.mock('node:fs', () => {
   };
 });
 
-jest.mock('./covers.helpers.ts', () => {
-  return {
-    getGameCoverMetadataBy: jest.fn(),
-    getAllGameCovers: jest.fn(),
-    createFullOutputPath: jest.fn(),
-    downloadFile: jest.fn(),
-  };
-});
-
+import { type WriteStream } from 'fs';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import isEmpty from 'lodash.isempty';
 
-import { getGameCoverMetadataBy, getAllGameCovers, createFullOutputPath, downloadFile } from './covers.helpers';
+import * as helpers from './covers.helpers';
 import { getGameCovers, downloadCovers } from './covers';
 
-import { GameCoverMetadata } from '../types';
+import { GameCover, GameCoverMetadata } from '../types';
 
 describe('unit:services/covers.ts', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('getGameCovers', () => {
     it('should get the game covers correctly', async () => {
-      (getGameCoverMetadataBy as jest.Mock).mockResolvedValue(Promise.resolve({ drafts: [], covers: [] }));
-      (getAllGameCovers as jest.Mock).mockResolvedValue(Promise.resolve({}));
+      jest.spyOn(helpers, 'getAllGameCovers').mockResolvedValueOnce(Promise.resolve([]));
+      jest.spyOn(helpers, 'getGameCoverMetadataBy').mockResolvedValueOnce(
+        Promise.resolve({
+          covers: [],
+          drafts: [],
+          gameTitle: '',
+          manuals: [],
+          platform: '',
+          source: '',
+        }),
+      );
 
       const gameCovers = await getGameCovers('jestGame');
       expect(gameCovers).toBeObject();
@@ -41,14 +43,14 @@ describe('unit:services/covers.ts', () => {
       expect(jestGame).toBeObject();
       expect(jestGame).toHaveProperty('covers');
 
-      const { covers } = jestGame as { covers: object };
-      expect(covers).toBeObject();
+      const { covers } = jestGame as { covers: Array<GameCover> };
+      expect(covers).toBeArray();
       expect(isEmpty(covers)).toBeTrue();
     });
 
     it('should throw error for one of the searches', async () => {
       const error = 'Invalid gameId';
-      (getGameCoverMetadataBy as jest.Mock).mockRejectedValue({ message: error });
+      jest.spyOn(helpers, 'getGameCoverMetadataBy').mockRejectedValueOnce({ message: error });
 
       const gameCovers = await getGameCovers('jestGame');
       expect(gameCovers).toBeObject();
@@ -56,41 +58,32 @@ describe('unit:services/covers.ts', () => {
   });
 
   describe('downloadCovers', () => {
-    let consoleSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-      consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    });
-
-    afterEach(() => {
-      consoleSpy.mockRestore();
-    });
-
     it('should download covers successfully', async () => {
-      (createFullOutputPath as jest.Mock).mockReturnValue('/path/to/output');
-      (downloadFile as jest.Mock).mockResolvedValue({
+      const response = {
         headers: { 'content-disposition': 'filename=test.jpg;' },
-        data: { pipe: jest.fn() },
-      });
+        data: { pipe: jest.fn() } as unknown as WriteStream,
+        config: {} as InternalAxiosRequestConfig<unknown>,
+        status: 200,
+        statusText: '',
+      } as AxiosResponse<WriteStream, unknown>;
+
+      jest.spyOn(helpers, 'createFullOutputPath').mockReturnValueOnce('/path/to/output');
+      jest.spyOn(helpers, 'downloadFile').mockResolvedValueOnce(response);
 
       await downloadCovers([1, 2, 3], '/output');
 
-      expect(createFullOutputPath).toHaveBeenCalledWith('/output');
-      expect(downloadFile).toHaveBeenCalledTimes(3);
+      expect(helpers.createFullOutputPath).toHaveBeenCalledWith('/output');
+      expect(helpers.downloadFile).toHaveBeenCalledTimes(3);
     });
 
     it('should handle errors during download', async () => {
-      (createFullOutputPath as jest.Mock).mockReturnValue('/path/to/output');
-      (downloadFile as jest.Mock).mockRejectedValue(new Error('Download failed'));
+      jest.spyOn(helpers, 'createFullOutputPath').mockReturnValueOnce('/path/to/output');
+      jest.spyOn(helpers, 'downloadFile').mockRejectedValue('Download failed');
 
-      await downloadCovers([1, 2, 3], '/output');
+      await downloadCovers([1], '/output');
 
-      expect(createFullOutputPath).toHaveBeenCalledWith('/output');
-      expect(downloadFile).toHaveBeenCalledTimes(3);
-
-      // Check if the error was thrown
-      expect(consoleSpy).toHaveBeenCalledWith("Can't download file: ", expect.any(Error));
-      expect(consoleSpy).toHaveBeenCalledTimes(3);
+      expect(helpers.createFullOutputPath).toHaveBeenCalledWith('/output');
+      expect(helpers.downloadFile).toHaveBeenCalledTimes(1);
     });
   });
 });

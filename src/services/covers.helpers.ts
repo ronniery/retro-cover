@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import httpApi from './client/http-api';
 
-import { GAME_COVERS, GAME_PROFILE } from '../constants';
+import { BASE_URL, DOWNLOAD_COVER, GAME_COVERS, GAME_PROFILE } from '../constants';
 import { GameCoverMetadataParser, GameCoverParser } from '../parsers/game-covers';
 import { GameCover, GameCoverMetadata, GetGameCoverOptions } from '../types';
 
@@ -53,5 +53,29 @@ export const downloadFile = async (downloadUrl: string): Promise<AxiosResponse<f
     httpsAgent: new https.Agent({
       rejectUnauthorized: false,
     }),
+  });
+};
+
+export const getFileStream = async (targetUrl: string | number, fullPath: string): Promise<void> => {
+  let downloadUrl = targetUrl;
+  if (typeof +targetUrl === 'number') {
+    downloadUrl = `${BASE_URL}${DOWNLOAD_COVER}?src=cdn&cover_id=${targetUrl}`;
+  }
+
+  const response = await downloadFile(downloadUrl as string);
+  const attachment = (response?.headers['content-disposition'] ?? '') as string;
+  const [, filename] = attachment?.match(/filename=(.*);/) ?? [];
+  const writeStream = fs.createWriteStream(`${fullPath}/${filename}`);
+
+  response.data.pipe(writeStream);
+};
+
+export const createFileStreams = (chunkBlock: Array<string | number>, fullPath: string): Promise<void>[] => {
+  return chunkBlock.map(async (targetUrl) => {
+    try {
+      await getFileStream(targetUrl, fullPath);
+    } catch (e: unknown) {
+      throw new Error("Can't download file: " + (e as Error).message);
+    }
   });
 };

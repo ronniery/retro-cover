@@ -1,10 +1,8 @@
 import omit from 'lodash.omit';
 import chunk from 'lodash.chunk';
-import fs from 'node:fs';
 
-import { getGameCoverMetadataBy, getAllGameCovers, createFullOutputPath, downloadFile } from './covers.helpers';
+import { getGameCoverMetadataBy, getAllGameCovers, createFullOutputPath, createFileStreams } from './covers.helpers';
 
-import { BASE_URL, DOWNLOAD_COVER } from '../constants';
 import { GameCoverMetadata, GetGameCoverOptions } from '../types';
 
 export type GameCoverCollection = {
@@ -32,26 +30,6 @@ export const getGameCovers = async (
   return allCovers;
 };
 
-const prepareChunk = (chunkBlock: Array<string | number>, fullPath: string): Promise<void>[] => {
-  return chunkBlock.map(async (targetUrl) => {
-    try {
-      let downloadUrl = targetUrl;
-      if (typeof +targetUrl === 'number') {
-        downloadUrl = `${BASE_URL}${DOWNLOAD_COVER}?src=cdn&cover_id=${targetUrl}`;
-      }
-
-      const response = await downloadFile(downloadUrl as string);
-      const attachment = (response?.headers['content-disposition'] ?? '') as string;
-      const [, filename] = attachment?.match(/filename=(.*);/) ?? [];
-      const writeStream = fs.createWriteStream(`${fullPath}/${filename}`);
-
-      response.data.pipe(writeStream);
-    } catch (e) {
-      console.error("Can't download file: ", e);
-    }
-  });
-};
-
 export const downloadCovers = async (
   targets: Array<string | number>,
   outputPath: string,
@@ -61,8 +39,8 @@ export const downloadCovers = async (
   const fullPath = createFullOutputPath(outputPath);
 
   for (const chunkBlock of chunk(targets, maxParallelDownloads)) {
-    const filesToDownload = prepareChunk(chunkBlock, fullPath);
+    const filesToDownload = createFileStreams(chunkBlock, fullPath);
 
-    await Promise.all(filesToDownload);
+    await Promise.allSettled(filesToDownload);
   }
 };
