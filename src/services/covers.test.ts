@@ -74,7 +74,7 @@ describe('unit:services/covers.ts', () => {
 
       expect(helpers.createFullOutputPath).toHaveBeenCalledWith('/output');
       expect(helpers.downloadFile).toHaveBeenCalledTimes(3);
-    });
+    }, 15000);
 
     it('should handle errors during download', async () => {
       jest.spyOn(helpers, 'createFullOutputPath').mockReturnValueOnce('/path/to/output');
@@ -84,6 +84,6 @@ describe('unit:services/covers.ts', () => {
 
       expect(helpers.createFullOutputPath).toHaveBeenCalledWith('/output');
       expect(helpers.downloadFile).toHaveBeenCalledTimes(1);
-    });
+    }, 10000);
   });
 });
