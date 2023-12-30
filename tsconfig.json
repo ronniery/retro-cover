@@ -11,7 +11,8 @@
     "noImplicitAny": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["jest", "node", "jest-extended", "cheerio"]
   },
   "include": ["src/**/*.ts", "testSetup.ts", "node_modules/jest-extended/types/**/*.d.ts"],
   "exclude": ["node_modules"]

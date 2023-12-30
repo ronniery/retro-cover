@@ -6,11 +6,13 @@ import { GetPlatformCoverOptions, getCoversByPlatform, searchOnline } from '../s
 
 type MockRequestParams = { path: string; query: nock.DataMatcherMap; body: string | object };
 
-type Expectation = { currentPage: number; totalOfResults: number; searchTerm?: string };
+type Expectation = Pick<AssertionConfig, 'totalOfResults'> & { expect: jest.Expect };
+
+type AssertionConfig = { currentPage: number | string; totalOfResults: number; searchTerm?: string };
 
 type ExpectBaseOptions<TResult> = {
-  expectation: Expectation;
-  baseExpect: { schema: TResult };
+  expectation: AssertionConfig;
+  baseExpect: { schema: TResult; expect: jest.Expect };
 };
 
 export const mockRequest = ({ path, query, body }: MockRequestParams): nock.Scope => {
@@ -19,21 +21,19 @@ export const mockRequest = ({ path, query, body }: MockRequestParams): nock.Scop
   });
 };
 
-type SearchOnlineServiceParams = {
-  searchTerm: string;
-  page?: number;
-  expectation: Omit<Expectation, 'searchTerm' | 'currentPage'>;
-};
+type SearchOnlineServiceParams = { searchTerm: string; page?: string | number };
 
-export const expectSearchOnline = async ({
-  searchTerm,
-  page = 1,
-  expectation,
-}: SearchOnlineServiceParams): Promise<void> => {
+export const expectSearchOnline = async (config: {
+  params: SearchOnlineServiceParams;
+  assertion: Expectation;
+}): Promise<void> => {
+  const { searchTerm, page = 1 } = config.params;
+  const { expect, ...rest } = config.assertion;
   const searchResult = await searchOnline(searchTerm, { page: page.toString() });
 
   expectBaseIntegration<SearchResult>(searchResult, {
     baseExpect: {
+      expect,
       schema: {
         gameId: expect.any(Number),
         name: expect.any(String),
@@ -42,7 +42,7 @@ export const expectSearchOnline = async ({
       },
     },
     expectation: {
-      ...expectation,
+      ...rest,
       currentPage: page,
       searchTerm,
     },
@@ -53,19 +53,19 @@ type PlatformCoverServiceParams = {
   platform: Platforms;
   matcher?: Matcher;
   options?: GetPlatformCoverOptions;
-  expectation: Omit<Expectation, 'searchTerm' | 'currentPage'>;
 };
 
-export const expectPlatformCovers = async ({
-  platform,
-  matcher,
-  options,
-  expectation,
-}: PlatformCoverServiceParams): Promise<void> => {
+export const expectPlatformCovers = async (config: {
+  params: PlatformCoverServiceParams;
+  assertion: Expectation;
+}): Promise<void> => {
+  const { platform, matcher, options } = config.params;
+  const { expect, ...rest } = config.assertion;
   const gameCovers = await getCoversByPlatform(platform, matcher, options);
 
   expectBaseIntegration<PlatformCover>(gameCovers, {
     baseExpect: {
+      expect,
       schema: {
         covers: expect.any(Number),
         manuals: expect.any(Number),
@@ -74,7 +74,7 @@ export const expectPlatformCovers = async ({
       },
     },
     expectation: {
-      ...expectation,
+      ...rest,
       currentPage: +(options?.page ?? 1),
       searchTerm: matcher,
     },
@@ -97,7 +97,7 @@ const expectBaseIntegration = <TResult>(
   expect(pagination).toBeObject();
   expect(pagination).toEqual(
     expect.objectContaining<Pagination>({
-      current: expectation.currentPage,
+      current: +expectation.currentPage,
       itemsPerPage: expect.toBeOneOf([expect.any(Number), null]),
       next: expect.toBeOneOf([expect.any(Number), null]),
       prev: expect.toBeOneOf([expect.any(Number), null]),

@@ -22,9 +22,12 @@ describe('integration:services/platform.ts', () => {
       });
 
       await expectPlatformCovers({
-        platform,
-        matcher,
-        expectation: {
+        params: {
+          platform,
+          matcher,
+        },
+        assertion: {
+          expect,
           totalOfResults: 14,
         },
       });
@@ -40,10 +43,13 @@ describe('integration:services/platform.ts', () => {
       });
 
       await expectPlatformCovers({
-        platform,
-        matcher,
-        options: { page: '2' },
-        expectation: {
+        params: {
+          platform,
+          matcher,
+          options: { page: '2' },
+        },
+        assertion: {
+          expect,
           totalOfResults: 15,
         },
       });

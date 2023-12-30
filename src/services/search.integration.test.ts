@@ -13,11 +13,11 @@ describe('integration:services/search.ts', () => {
       });
 
       await expectSearchOnline({
-        searchTerm: 'mario',
-        page: 1, // Page is optional inside search online service
-        expectation: {
-          totalOfResults: 30,
+        params: {
+          searchTerm: 'mario',
+          page: 1,
         },
+        assertion: { expect, totalOfResults: 30 },
       });
 
       expect(scope.isDone()).toBeTrue();
@@ -31,9 +31,12 @@ describe('integration:services/search.ts', () => {
       });
 
       await expectSearchOnline({
-        searchTerm: 'mario',
-        page: 2,
-        expectation: {
+        params: {
+          searchTerm: 'mario',
+          page: 2,
+        },
+        assertion: {
+          expect,
           totalOfResults: 30,
         },
       });
