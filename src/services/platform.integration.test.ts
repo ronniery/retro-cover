@@ -1,10 +1,11 @@
 import nock from 'nock';
 
-import { GetCoversByPlatformQuery, getAdditionsByPlatform, getCoversByPlatform } from '.';
+import { getAdditionsByPlatform } from '.';
 import { platforms } from './platform.mock';
 
 import { BASE_URL, Consoles, GAME_PROFILE } from '../constants';
-import { AddedGame, Matcher, PlatformCover } from '../types';
+import { AddedGame, Matcher } from '../types';
+import { expectPlatformCovers, mockRequest } from '../utils';
 
 describe('integration:services/platform.ts', () => {
   const { playstation3 } = platforms;
@@ -12,69 +13,40 @@ describe('integration:services/platform.ts', () => {
 
   describe('getCoversByPlatform', () => {
     const matcher: Matcher = 'A';
-    const query: GetCoversByPlatformQuery = { cat_id: `${platform}`, view: matcher };
 
     it('should parse covers by platform', async () => {
-      const scope = nock(BASE_URL).get(GAME_PROFILE).query(query).reply(200, playstation3.covers[matcher].page1, {
-        'Content-type': 'text/html',
+      const scope = mockRequest({
+        path: GAME_PROFILE,
+        query: { cat_id: `${platform}`, view: matcher },
+        body: playstation3.covers[matcher].page1,
       });
 
-      const gameCovers = await getCoversByPlatform(platform, matcher);
-      expect(gameCovers).toBeObject();
-
-      const { searchTerm } = gameCovers;
-      expect(searchTerm).toBeString();
-      expect(searchTerm).toEqual(matcher);
-
-      const { pagination } = gameCovers;
-      expect(pagination).toBeObject();
-      expect(pagination.current).toBe(1);
-
-      const { results } = gameCovers;
-      expect(results).toBeArray();
-      expect(results.length).toBe(14);
-      expect(results).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining<PlatformCover>({
-            covers: expect.any(Number),
-            manuals: expect.any(Number),
-            gameTitle: expect.any(String),
-            source: expect.any(String),
-          }),
-        ]),
-      );
+      await expectPlatformCovers({
+        platform,
+        matcher,
+        expectation: {
+          totalOfResults: 14,
+        },
+      });
 
       expect(scope.isDone()).toBeTrue();
     });
 
     it('should parse the second page', async () => {
-      const scope = nock(BASE_URL)
-        .get(GAME_PROFILE)
-        .query({ ...query, page: '2' })
-        .reply(200, playstation3.covers[matcher].page2, {
-          'Content-type': 'text/html',
-        });
+      const scope = mockRequest({
+        path: GAME_PROFILE,
+        query: { cat_id: `${platform}`, view: matcher, page: '2' },
+        body: playstation3.covers[matcher].page2,
+      });
 
-      const gameCovers = await getCoversByPlatform(platform, matcher, { page: '2' });
-      expect(gameCovers).toBeObject();
-
-      const { pagination } = gameCovers;
-      expect(pagination).toBeObject();
-      expect(pagination.current).toBe(2);
-
-      const { results } = gameCovers;
-      expect(results).toBeArray();
-      expect(results.length).toBe(15);
-      expect(results).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining<PlatformCover>({
-            covers: expect.any(Number),
-            manuals: expect.any(Number),
-            gameTitle: expect.any(String),
-            source: expect.any(String),
-          }),
-        ]),
-      );
+      await expectPlatformCovers({
+        platform,
+        matcher,
+        options: { page: '2' },
+        expectation: {
+          totalOfResults: 15,
+        },
+      });
 
       expect(scope.isDone()).toBeTrue();
     });
@@ -119,9 +91,9 @@ describe('integration:services/platform.ts', () => {
       const gameAdditions = await getAdditionsByPlatform(Consoles.amigaCD32, {
         ignoreEmpty: true,
       });
+
       expect(gameAdditions.addedGames).toBeArray();
       expect(gameAdditions.addedGames.length).toBe(21);
-
       expect(scope.isDone()).toBeTrue();
     });
 
