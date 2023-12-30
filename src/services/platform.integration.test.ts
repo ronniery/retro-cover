@@ -1,22 +1,20 @@
-import nock from 'nock';
-
 import { getAdditionsByPlatform } from '.';
 import { platforms } from './platform.mock';
 
-import { BASE_URL, Consoles, GAME_PROFILE } from '../constants';
+import { Consoles, GAME_PROFILE } from '../constants';
 import { AddedGame, Matcher } from '../types';
-import { expectPlatformCovers, mockHttp } from '../utils';
+import { createMockHttp, expectPlatformCovers } from '../utils';
 
 describe('integration:services/platform.ts', () => {
   const { playstation3 } = platforms;
-  const platform = Consoles.amigaCD32;
+  const platform = Consoles.playstation3;
 
   describe('getCoversByPlatform', () => {
     const matcher: Matcher = 'A';
+    const mockHttp = createMockHttp(GAME_PROFILE);
 
     it('should parse covers by platform', async () => {
       const scope = mockHttp({
-        path: GAME_PROFILE,
         query: { cat_id: `${platform}`, view: matcher },
         body: playstation3.covers[matcher].page1,
       });
@@ -37,7 +35,6 @@ describe('integration:services/platform.ts', () => {
 
     it('should parse the second page', async () => {
       const scope = mockHttp({
-        path: GAME_PROFILE,
         query: { cat_id: `${platform}`, view: matcher, page: '2' },
         body: playstation3.covers[matcher].page2,
       });
@@ -59,12 +56,12 @@ describe('integration:services/platform.ts', () => {
   });
 
   describe('getAdditionsByPlatform', () => {
-    it('should fetch additions by platform', async () => {
-      const scope = nock(BASE_URL).get(GAME_PROFILE).query({ cat_id: platform }).reply(200, playstation3.additions, {
-        'Content-type': 'text/html',
-      });
+    const mockHttp = createMockHttp(GAME_PROFILE);
 
-      const gameAdditions = await getAdditionsByPlatform(Consoles.amigaCD32);
+    it('should fetch additions by platform', async () => {
+      const scope = mockHttp({ body: playstation3.additions, query: { cat_id: platform } });
+
+      const gameAdditions = await getAdditionsByPlatform(Consoles.playstation3);
       expect(gameAdditions).toBeObject();
 
       const { platformInfo } = gameAdditions;
@@ -90,11 +87,9 @@ describe('integration:services/platform.ts', () => {
     });
 
     it('should fetch additions by platform, ignoring empty', async () => {
-      const scope = nock(BASE_URL).get(GAME_PROFILE).query({ cat_id: platform }).reply(200, playstation3.additions, {
-        'Content-type': 'text/html',
-      });
+      const scope = mockHttp({ body: playstation3.additions, query: { cat_id: platform } });
 
-      const gameAdditions = await getAdditionsByPlatform(Consoles.amigaCD32, {
+      const gameAdditions = await getAdditionsByPlatform(Consoles.playstation3, {
         ignoreEmpty: true,
       });
 
@@ -104,12 +99,10 @@ describe('integration:services/platform.ts', () => {
     });
 
     it('should fetch additions by platform, filtering by date', async () => {
-      const startingAt = new Date('2023-09-30T23:00:00.000Z'); // october
-      const scope = nock(BASE_URL).get(GAME_PROFILE).query({ cat_id: platform }).reply(200, playstation3.additions, {
-        'Content-type': 'text/html',
-      });
+      const scope = mockHttp({ body: playstation3.additions, query: { cat_id: platform } });
 
-      const gameAdditions = await getAdditionsByPlatform(Consoles.amigaCD32, {
+      const startingAt = new Date('2023-09-30T23:00:00.000Z'); // october
+      const gameAdditions = await getAdditionsByPlatform(Consoles.playstation3, {
         startingAt,
       });
 
@@ -124,11 +117,8 @@ describe('integration:services/platform.ts', () => {
     });
 
     it('should fetch additions by platform, ordering by country', async () => {
-      const scope = nock(BASE_URL).get(GAME_PROFILE).query({ cat_id: platform }).reply(200, playstation3.additions, {
-        'Content-type': 'text/html',
-      });
-
-      const gameAdditions = await getAdditionsByPlatform(Consoles.amigaCD32, {
+      const scope = mockHttp({ body: playstation3.additions, query: { cat_id: platform } });
+      const gameAdditions = await getAdditionsByPlatform(Consoles.playstation3, {
         order: {
           country: 'asc',
         },
