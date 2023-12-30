@@ -1,12 +1,12 @@
 import { searches } from './search.mock';
 
 import { SEARCH_GAMES } from '../constants';
-import { expectSearchOnline, mockRequest } from '../utils';
+import { expectSearchOnline, mockHttp } from '../utils';
 
 describe('integration:services/search.ts', () => {
   describe('searchOnline', () => {
     it('should search for online results', async () => {
-      const scope = mockRequest({
+      const scope = mockHttp({
         path: SEARCH_GAMES,
         query: { searchstring: 'mario', page: '1' },
         body: searches.page1,
@@ -24,7 +24,7 @@ describe('integration:services/search.ts', () => {
     });
 
     it('should search online and bring the second page', async () => {
-      const scope = mockRequest({
+      const scope = mockHttp({
         path: SEARCH_GAMES,
         query: { searchstring: 'mario', page: '2' },
         body: searches.page2,

@@ -5,7 +5,7 @@ import { platforms } from './platform.mock';
 
 import { BASE_URL, Consoles, GAME_PROFILE } from '../constants';
 import { AddedGame, Matcher } from '../types';
-import { expectPlatformCovers, mockRequest } from '../utils';
+import { expectPlatformCovers, mockHttp } from '../utils';
 
 describe('integration:services/platform.ts', () => {
   const { playstation3 } = platforms;
@@ -15,7 +15,7 @@ describe('integration:services/platform.ts', () => {
     const matcher: Matcher = 'A';
 
     it('should parse covers by platform', async () => {
-      const scope = mockRequest({
+      const scope = mockHttp({
         path: GAME_PROFILE,
         query: { cat_id: `${platform}`, view: matcher },
         body: playstation3.covers[matcher].page1,
@@ -36,7 +36,7 @@ describe('integration:services/platform.ts', () => {
     });
 
     it('should parse the second page', async () => {
-      const scope = mockRequest({
+      const scope = mockHttp({
         path: GAME_PROFILE,
         query: { cat_id: `${platform}`, view: matcher, page: '2' },
         body: playstation3.covers[matcher].page2,

@@ -15,7 +15,11 @@ type ExpectBaseOptions<TResult> = {
   baseExpect: { schema: TResult; expect: jest.Expect };
 };
 
-export const mockRequest = ({ path, query, body }: MockRequestParams): nock.Scope => {
+export const createMockHttp = (path: string) => {
+  return ({ query, body }: Omit<MockRequestParams, 'path'>): nock.Scope => mockHttp({ path, query, body });
+};
+
+export const mockHttp = ({ path, query, body }: MockRequestParams): nock.Scope => {
   return nock(BASE_URL).get(path).query(query).reply(200, body, {
     'Content-type': 'text/html',
   });

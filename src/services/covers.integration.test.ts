@@ -9,6 +9,7 @@ import { mockGameCovers } from './covers.mock';
 import { BASE_URL, DOWNLOAD_COVER, GAME_PROFILE } from '../constants';
 import { GameCover, GameCoverMetadata } from '../types';
 import { downloadCovers, getGameCovers } from './covers';
+import { createMockHttp } from '../utils';
 
 type TemporaryFile = {
   base64: string;
@@ -22,6 +23,8 @@ type TemporaryFile = {
 
 describe('integration:services/covers.ts', () => {
   describe('getGameCovers', () => {
+    const mockHttp = createMockHttp(GAME_PROFILE);
+
     it('should get the game covers correctly', async () => {
       const {
         marioGolf: { cover1, cover2 },
@@ -29,17 +32,9 @@ describe('integration:services/covers.ts', () => {
 
       const gameId = 'jestGame';
 
-      nock(BASE_URL).get(GAME_PROFILE).query({ game_id: gameId }).reply(200, cover1.html, {
-        'Content-type': 'text/html',
-      });
-
-      nock(BASE_URL).get(GAME_PROFILE).query({ cover_id: cover1.coverId }).reply(200, cover1.html, {
-        'Content-type': 'text/html',
-      });
-
-      nock(BASE_URL).get(GAME_PROFILE).query({ cover_id: cover2.coverId }).reply(200, cover2.html, {
-        'Content-type': 'text/html',
-      });
+      mockHttp({ body: cover1.html, query: { game_id: gameId } });
+      mockHttp({ body: cover1.html, query: { cover_id: cover1.coverId } });
+      mockHttp({ body: cover2.html, query: { cover_id: cover2.coverId } });
 
       const gameCovers = await getGameCovers(gameId);
       expect(gameCovers).toBeObject();
